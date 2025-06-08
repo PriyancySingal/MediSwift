@@ -1,169 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders - MediBharat</title>
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3f72af;
+            --secondary: #112d4e;
+            --accent: #ff6b6b;
+            --light: #f9f7f7;
+            --dark: #112d4e;
+            --gray: #dbe2ef;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .orders-container {
+            padding: 30px 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .order-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 8px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .order-date {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .order-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-shipped {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .order-body {
+            padding: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details h4 {
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .order-total {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            text-align: right;
+            font-weight: 600;
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .no-orders i {
+            font-size: 50px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-status {
+                align-self: flex-start;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="dashboard-container">
-        <!-- Top Navigation -->
-        <nav class="top-nav">
-            <div class="container">
-                <div class="profile-header">
-                    <a href="dashboard.html" class="back-btn">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div class="welcome-text">
-                        <h2>My Orders</h2>
-                        <p>Track and manage your orders</p>
-                    </div>
-                    <div class="profile-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="dashboard.html" class="logo">MediBharat</a>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount">0</span>
                 </div>
             </div>
-        </nav>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container">
-                <!-- Order Tabs -->
-                <div class="order-tabs">
-                    <button class="tab-btn active">All Orders</button>
-                    <button class="tab-btn">In Progress</button>
-                    <button class="tab-btn">Delivered</button>
-                    <button class="tab-btn">Cancelled</button>
-                </div>
+    <div class="container">
+        <div class="orders-container">
+            <h1 class="page-title">My Orders</h1>
 
-                <!-- Order List -->
-                <div class="orders-list">
-                    <!-- Order Card 1 -->
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-meta">
-                                <span class="order-id">Order #MB12345</span>
-                                <span class="order-date">Placed on 12 Jun 2023</span>
-                            </div>
-                            <div class="order-status processing">In Transit</div>
-                        </div>
-                        
-                        <div class="order-items">
-                            <div class="order-item">
-                                <img src="https://img.pristyncare.com/static_pages/meftal-page/Dolo2.webp" alt="Medicine" class="item-image">
-                                <div class="item-details">
-                                    <h4>Dolo 650mg Tablet</h4>
-                                    <p>Strip of 15 tablets</p>
-                                    <div class="item-meta">
-                                        <span class="price">₹25.00</span>
-                                        <span class="qty">Qty: 2</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="order-item">
-                                <img src="https://assets.truemeds.in/Images/ProductImage/TM-TACR1-044993/zincovit-tablet-15_zincovit-tablet-15--TM-TACR1-044993_1.png" alt="Medicine" class="item-image">
-                                <div class="item-details">
-                                    <h4>Zincovit Tablet</h4>
-                                    <p>Bottle of 60 tablets</p>
-                                    <div class="item-meta">
-                                        <span class="price">₹120.00</span>
-                                        <span class="qty">Qty: 1</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="order-summary">
-                            <div class="summary-row">
-                                <span>Item Total</span>
-                                <span>₹170.00</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Delivery Fee</span>
-                                <span>₹49.00</span>
-                            </div>
-                            <div class="summary-row total">
-                                <span>Total Amount</span>
-                                <span>₹219.00</span>
-                            </div>
-                        </div>
-
-                        <div class="order-actions">
-                            <button class="btn btn-outline"><i class="fas fa-truck"></i> Track Order</button>
-                            <button class="btn btn-text"><i class="fas fa-redo"></i> Reorder</button>
-                        </div>
-                    </div>
-
-                    <!-- Order Card 2 -->
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-meta">
-                                <span class="order-id">Order #MB12344</span>
-                                <span class="order-date">Delivered on 5 Jun 2023</span>
-                            </div>
-                            <div class="order-status delivered">Delivered</div>
-                        </div>
-                        
-                        <div class="order-items">
-                            <div class="order-item">
-                                <img src="https://www.bbassets.com/media/uploads/p/l/40323622_1-limcee-vitamin-c-chewable-tablet-500-mg-orange-flavour.jpg" alt="Medicine" class="item-image">
-                                <div class="item-details">
-                                    <h4>Vitamin C Chewable</h4>
-                                    <p>Bottle of 30 tablets</p>
-                                    <div class="item-meta">
-                                        <span class="price">₹199.00</span>
-                                        <span class="qty">Qty: 1</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="order-summary">
-                            <div class="summary-row">
-                                <span>Item Total</span>
-                                <span>₹199.00</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Delivery Fee</span>
-                                <span>FREE</span>
-                            </div>
-                            <div class="summary-row total">
-                                <span>Total Amount</span>
-                                <span>₹199.00</span>
-                            </div>
-                        </div>
-
-                        <div class="order-actions">
-                            <button class="btn btn-outline"><i class="fas fa-box"></i> View Details</button>
-                            <button class="btn btn-text"><i class="fas fa-redo"></i> Reorder</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="order-tabs">
+                <button class="tab-btn active" onclick="filterOrders('all')">All Orders</button>
+                <button class="tab-btn" onclick="filterOrders('confirmed')">Confirmed</button>
+                <button class="tab-btn" onclick="filterOrders('shipped')">Shipped</button>
+                <button class="tab-btn" onclick="filterOrders('delivered')">Delivered</button>
+                <button class="tab-btn" onclick="filterOrders('cancelled')">Cancelled</button>
             </div>
-        </main>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="orders.html" class="nav-item active">
-                <i class="fas fa-shopping-bag"></i>
-                <span>Orders</span>
-            </a>
-            <a href="prescriptions.html" class="nav-item">
-                <i class="fas fa-prescription"></i>
-                <span>Prescriptions</span>
-            </a>
-            <a href="account.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
-            </a>
-        </nav>
+            <div id="ordersList">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
     </div>
-    <script src="js/dashboard.js"></script>
+
+    <script>
+        // Load orders when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+            updateCartCount();
+        });
+
+        // Load orders from localStorage
+        function loadOrders(filter = 'all') {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const ordersList = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="no-orders">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Orders Yet</h3>
+                        <p>You haven't placed any orders yet.</p>
+                        <a href="catalog.html" class="btn">Start Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Filter orders if needed
+            const filteredOrders = filter === 'all'
+                ? orders
+                : orders.filter(order => order.status.toLowerCase() === filter);
+
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="no-orders">
+                        <i class="fas fa-search"></i>
+                        <h3>No ${filter} orders found</h3>
+                        <a href="catalog.html" class="btn">Continue Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generate orders HTML
+            let ordersHTML = '';
+            filteredOrders.forEach(order => {
+                const orderDate = new Date(order.date).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                let statusClass = '';
+                if (order.status.toLowerCase().includes('confirm')) statusClass = 'status-confirmed';
+                else if (order.status.toLowerCase().includes('ship')) statusClass = 'status-shipped';
+                else if (order.status.toLowerCase().includes('deliver')) statusClass = 'status-delivered';
+                else if (order.status.toLowerCase().includes('cancel')) statusClass = 'status-cancelled';
+
+                let itemsHTML = '';
+                order.items.forEach(item => {
+                    itemsHTML += `
+                        <div class="order-item">
+                            <div class="item-details">
+                                <h4>${item.medicineName}</h4>
+                                <div class="item-meta">
+                                    <span>Qty: ${item.quantity}</span>
+                                    <span>Price: ₹${item.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                ₹${(item.price * item.quantity).toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                ordersHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <span class="order-id">Order #${order.id}</span>
+                                <span class="order-date">Placed on ${orderDate}</span>
+                            </div>
+                            <span class="order-status ${statusClass}">${order.status}</span>
+                        </div>
+                        <div class="order-body">
+                            ${itemsHTML}
+                        </div>
+                        <div class="order-total">
+                            Total: ₹${order.total.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            ordersList.innerHTML = ordersHTML;
+        }
+
+        // Filter orders by status
+        function filterOrders(status) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Load filtered orders
+            loadOrders(status);
+        }
+
+
+        // Update cart count in header
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+    </script>
 </body>
+
 </html>

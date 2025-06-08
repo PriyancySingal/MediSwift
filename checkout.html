@@ -743,34 +743,41 @@
     // Generate order confirmation
     function generateOrderConfirmation() {
       // Generate a random order ID
-      const orderId = 'ORD' + Math.floor(100000 + Math.random() * 900000);
+      const orderId = 'MB' + Math.floor(10000 + Math.random() * 90000);
       document.getElementById('orderId').textContent = orderId;
 
-      // Clear cart after successful order
-      localStorage.removeItem('cart');
-
-      // You would typically send this data to your server here
+      // Create order object
       const orderData = {
-        orderId,
+        id: orderId,
+        date: new Date().toISOString(),
+        status: 'Confirmed',
+        items: [...cart],
         customer: {
           name: document.getElementById('fullName').value,
-          email: document.getElementById('email').value,
           phone: document.getElementById('phone').value,
+          email: document.getElementById('email').value,
           address: document.getElementById('address').value,
-          pincode: document.getElementById('pincode').value
+          pincode: document.getElementById('pincode').value,
+          landmark: document.getElementById('landmark').value || 'N/A'
         },
-        items: cart,
         paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
         subtotal: parseFloat(document.getElementById('orderSubtotal').textContent.replace('₹', '')),
         deliveryFee: 40,
-        total: parseFloat(document.getElementById('orderTotal').textContent.replace('₹', '')),
-        status: 'confirmed',
-        date: new Date().toISOString()
+        total: parseFloat(document.getElementById('orderTotal').textContent.replace('₹', ''))
       };
 
+      // Save order to localStorage
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.unshift(orderData); // Add new order to beginning of array
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      // Clear cart
+      localStorage.removeItem('cart');
+
+      // Update cart count
+      updateCartCount();
+
       console.log('Order placed:', orderData);
-      // Here you would typically send orderData to your backend
-      // Example: fetch('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
     }
   </script>
 </body>

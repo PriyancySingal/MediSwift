@@ -1,127 +1,532 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Prescriptions - MediBharat</title>
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3f72af;
+            --secondary: #112d4e;
+            --accent: #ff6b6b;
+            --light: #f9f7f7;
+            --dark: #112d4e;
+            --gray: #dbe2ef;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        #cartCount {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .page-title {
+            text-align: center;
+            margin: 30px 0;
+            color: var(--secondary);
+        }
+
+
+        .upload-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 2px dashed var(--gray);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-card h3 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .upload-card p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        .prescriptions-list {
+            margin-top: 30px;
+        }
+
+        .prescription-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .prescription-title {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        .prescription-date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .prescription-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-processing {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .prescription-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .detail-item i {
+            margin-right: 8px;
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .prescription-files {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .file-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-left: 10px;
+        }
+
+        .prescription-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(63, 114, 175, 0.1);
+        }
+
+        .btn-text {
+            background: transparent;
+            color: var(--primary);
+            padding: 10px 15px;
+        }
+
+        .btn-text:hover {
+            background: rgba(63, 114, 175, 0.1);
+        }
+
+        .btn-danger {
+            background: #f44336;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .no-prescriptions {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+        }
+
+        .no-prescriptions i {
+            font-size: 3rem;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .prescription-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="dashboard-container">
-        <!-- Top Navigation -->
-        <nav class="top-nav">
-            <div class="container">
-                <div class="profile-header">
-                    <a href="dashboard.html" class="back-btn">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div class="welcome-text">
-                        <h2>My Prescriptions</h2>
-                    </div>
-                    <div class="profile-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="dashboard.html" class="logo">MediBharat</a>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount">0</span>
                 </div>
             </div>
-        </nav>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container">
-                <!-- Upload Prescription Card -->
-                <div class="upload-card">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3>Upload New Prescription</h3>
-                    <p>Take a clear photo or upload a file</p>
-                    <a href="upload.html" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Upload Prescription
-                    </a>
-                </div>
+    <div class="container">
+        <h1 class="page-title">My Prescriptions</h1>
 
-                <!-- Prescriptions List -->
-                <section class="prescriptions-section">
-                    <div class="section-header">
-                        <h3>Recent Prescriptions</h3>
-                    </div>
-
-                    <!-- Prescription Card 1 -->
-                    <div class="prescription-card">
-                        <div class="prescription-header">
-                            <div class="prescription-meta">
-                                <h4>Dr. Sharma's Prescription</h4>
-                                <span class="prescription-date">15 May 2023</span>
-                            </div>
-                            <div class="prescription-status active">Active</div>
-                        </div>
-                        <div class="prescription-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user-md"></i>
-                                <span>Dr. Rajesh Sharma</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-stethoscope"></i>
-                                <span>General Physician</span>
-                            </div>
-                        </div>
-                        <div class="prescription-actions">
-                            <button class="btn-icon"><i class="fas fa-eye"></i> View</button>
-                            <button class="btn-icon"><i class="fas fa-download"></i> Download</button>
-                            <button class="btn-icon text-danger"><i class="fas fa-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Prescription Card 2 -->
-                    <div class="prescription-card">
-                        <div class="prescription-header">
-                            <div class="prescription-meta">
-                                <h4>Dental Checkup</h4>
-                                <span class="prescription-date">2 May 2023</span>
-                            </div>
-                            <div class="prescription-status expired">Expired</div>
-                        </div>
-                        <div class="prescription-details">
-                            <div class="detail-item">
-                                <i class="fas fa-user-md"></i>
-                                <span>Dr. Priya Singh</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-tooth"></i>
-                                <span>Dentist</span>
-                            </div>
-                        </div>
-                        <div class="prescription-actions">
-                            <button class="btn-icon"><i class="fas fa-eye"></i> View</button>
-                            <button class="btn-icon"><i class="fas fa-download"></i> Download</button>
-                            <button class="btn-icon text-danger"><i class="fas fa-trash"></i> Delete</button>
-                        </div>
-                    </div>
-                </section>
+        <div class="upload-card" onclick="window.location.href='upload.html'">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
             </div>
-        </main>
+            <h3>Upload New Prescription</h3>
+            <p>Take a clear photo or upload a file</p>
+            <button class="btn">
+                <i class="fas fa-plus"></i> Upload Prescription
+            </button>
+        </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="orders.html" class="nav-item">
-                <i class="fas fa-shopping-bag"></i>
-                <span>Orders</span>
-            </a>
-            <a href="prescriptions.html" class="nav-item active">
-                <i class="fas fa-prescription"></i>
-                <span>Prescriptions</span>
-            </a>
-            <a href="account.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
-            </a>
-        </nav>
+        <div class="prescriptions-list" id="prescriptionsList">
+            <!-- Prescriptions will be loaded here -->
+        </div>
     </div>
-    <script src="js/dashboard.js"></script>
+
+    <script>
+        // Load prescriptions when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPrescriptions();
+            updateCartCount();
+        });
+
+        // Load prescriptions from localStorage
+        function loadPrescriptions() {
+            const prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
+            const prescriptionsList = document.getElementById('prescriptionsList');
+
+            if (prescriptions.length === 0) {
+                prescriptionsList.innerHTML = `
+                    <div class="no-prescriptions">
+                        <i class="fas fa-file-prescription"></i>
+                        <h3>No Prescriptions Yet</h3>
+                        <p>You haven't uploaded any prescriptions yet.</p>
+                        <button class="btn" onclick="window.location.href='upload.html'">
+                            <i class="fas fa-upload"></i> Upload Your First Prescription
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort prescriptions by date (newest first)
+            prescriptions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            // Generate prescriptions HTML
+            let prescriptionsHTML = '';
+            prescriptions.forEach(prescription => {
+                const formattedDate = new Date(prescription.createdAt).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                const deliveryDate = new Date(prescription.deliveryDate).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                let statusClass = 'status-pending';
+                if (prescription.status === 'processing') statusClass = 'status-processing';
+                else if (prescription.status === 'completed') statusClass = 'status-completed';
+                else if (prescription.status === 'cancelled') statusClass = 'status-cancelled';
+
+                let filesHTML = '';
+                if (prescription.files && prescription.files.length > 0) {
+                    filesHTML = `
+                        <div class="prescription-files">
+                            <h4>Uploaded Files (${prescription.files.length})</h4>
+                            ${prescription.files.map(file => `
+                                <div class="file-item">
+                                    <i class="fas ${file.type === 'application/pdf' ? 'fa-file-pdf' : 'fa-file-image'} file-icon"></i>
+                                    <span class="file-name">${file.name}</span>
+                                    <span class="file-size">${formatFileSize(file.size)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                prescriptionsHTML += `
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <div>
+                                <h3 class="prescription-title">Prescription #${prescription.id}</h3>
+                                <span class="prescription-date">Uploaded on ${formattedDate}</span>
+                            </div>
+                            <span class="prescription-status ${statusClass}">
+                                ${prescription.status.charAt(0).toUpperCase() + prescription.status.slice(1)}
+                            </span>
+                        </div>
+                        
+                        <div class="prescription-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-md"></i>
+                                <span>${prescription.doctorName || 'Not specified'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Delivery by: ${deliveryDate}</span>
+                            </div>
+                            ${prescription.notes ? `
+                                <div class="detail-item" style="width:100%; margin-top:10px;">
+                                    <i class="fas fa-sticky-note"></i>
+                                    <span><strong>Notes:</strong> ${prescription.notes}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${filesHTML}
+                        
+                        <div class="prescription-actions">
+                            <button class="btn btn-outline" onclick="trackPrescription('${prescription.id}')">
+                                <i class="fas fa-truck"></i> Track Order
+                            </button>
+                            <button class="btn btn-text" onclick="downloadPrescription('${prescription.id}')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-text text-danger" onclick="deletePrescription('${prescription.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            prescriptionsList.innerHTML = prescriptionsHTML;
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Track prescription
+        function trackPrescription(prescriptionId) {
+            alert(`Tracking for prescription #${prescriptionId} will be available soon.`);
+        }
+
+        // Download prescription
+        function downloadPrescription(prescriptionId) {
+            alert(`Downloading prescription #${prescriptionId}`);
+            // In a real app, this would trigger a download of the prescription file
+        }
+
+        // Delete prescription
+        function deletePrescription(prescriptionId) {
+            if (confirm('Are you sure you want to delete this prescription? This action cannot be undone.')) {
+                const prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
+                const updatedPrescriptions = prescriptions.filter(p => p.id !== prescriptionId);
+                localStorage.setItem('prescriptions', JSON.stringify(updatedPrescriptions));
+                loadPrescriptions();
+                showToast('Prescription deleted successfully', 'success');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 300);
+                }, 3000);
+            }, 100);
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+    </script>
 </body>
+
 </html>
