@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MediBharat Checkout</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f7f7;
+        margin: 0;
+        padding: 1rem;
+        color: #112d4e;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .cart-summary {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+      }
+      .item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      form {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin: 0.5rem 0 0.2rem;
+        font-weight: 600;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px solid #dbe2ef;
+        border-radius: 5px;
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+      }
+      button {
+        background: #3f72af;
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 700;
+        width: 100%;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background: #112d4e;
+      }
+      #message {
+        text-align: center;
+        margin-top: 1rem;
+        font-weight: 700;
+        color: green;
+      }
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #3f72af;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Checkout</h1>
+
+    <div class="cart-summary" id="cartSummary">
+      <h2>Order Summary</h2>
+      <!-- Cart items will be inserted here -->
+    </div>
+
+    <form id="checkoutForm">
+      <h2>Delivery Details</h2>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required />
+
+      <label for="phone">Phone Number</label>
+      <input
+        type="tel"
+        id="phone"
+        pattern="[0-9]{10}"
+        required
+        placeholder="10-digit number"
+      />
+
+      <label for="address">Delivery Address</label>
+      <textarea id="address" rows="3" required></textarea>
+
+      <label>Uploaded Prescription File</label>
+      <div id="uploadedFile">No file uploaded</div>
+
+      <button type="submit">Place Order</button>
+    </form>
+
+    <a href="cart.html">← Back to Cart</a>
+
+    <div id="message"></div>
+
+    <script>
+      const medicines = [
+        { id: 1, name: "Paracetamol 500mg" },
+        { id: 2, name: "Azithromycin 250mg" },
+        { id: 3, name: "Cetirizine 10mg" },
+        { id: 4, name: "Amoxicillin 500mg" },
+      ];
+
+      const pharmacies = [
+        { id: 101, name: "City Pharmacy", location: "MG Road" },
+        { id: 102, name: "HealthPlus Chemist", location: "Sector 12" },
+        { id: 103, name: "24x7 Meds", location: "Near Bus Stand" },
+      ];
+
+      const inventory = [
+        { medicineId: 1, pharmacyId: 101, price: 20 },
+        { medicineId: 1, pharmacyId: 103, price: 22 },
+        { medicineId: 2, pharmacyId: 102, price: 45 },
+        { medicineId: 3, pharmacyId: 101, price: 15 },
+        { medicineId: 3, pharmacyId: 102, price: 14 },
+        { medicineId: 4, pharmacyId: 103, price: 55 },
+      ];
+
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const cartSummaryDiv = document.getElementById("cartSummary");
+      const uploadedFileDiv = document.getElementById("uploadedFile");
+      const checkoutForm = document.getElementById("checkoutForm");
+      const messageDiv = document.getElementById("message");
+
+      function getPrice(medId, pharmId) {
+        const item = inventory.find(
+          (i) => i.medicineId === medId && i.pharmacyId === pharmId
+        );
+        return item ? item.price : 0;
+      }
+
+      function renderSummary() {
+        if (cart.length === 0) {
+          cartSummaryDiv.innerHTML =
+            '<p>Your cart is empty. <a href="catalog.html">Search medicines</a>.</p>';
+          checkoutForm.style.display = "none";
+          return;
+        }
+
+        let total = 0;
+        const list = document.createElement("div");
+
+        cart.forEach((item) => {
+          const med = medicines.find((m) => m.id === item.medicineId);
+          const pharm = pharmacies.find((p) => p.id === item.pharmacyId);
+          const price = getPrice(item.medicineId, item.pharmacyId);
+          const subtotal = price * item.qty;
+          total += subtotal;
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "item";
+          itemDiv.innerHTML = `<div>${med.name} (${item.qty} pcs)</div><div>₹${subtotal}</div>`;
+          list.appendChild(itemDiv);
+        });
+
+        const totalDiv = document.createElement("div");
+        totalDiv.className = "item";
+        totalDiv.style.fontWeight = "bold";
+        totalDiv.style.borderTop = "1px solid #ccc";
+        totalDiv.style.paddingTop = "0.5rem";
+        totalDiv.innerHTML = `<div>Total</div><div>₹${total}</div>`;
+
+        cartSummaryDiv.appendChild(list);
+        cartSummaryDiv.appendChild(totalDiv);
+      }
+
+      function displayUploadedFileName() {
+        const fileData = localStorage.getItem("uploadedPrescriptionName");
+        uploadedFileDiv.textContent = fileData ? fileData : "No file uploaded";
+      }
+
+      // Save uploaded prescription filename from cart.html to localStorage
+      // (We will add event listener here)
+      // But for now, this is a demo placeholder
+
+      // On page load
+      renderSummary();
+      displayUploadedFileName();
+
+      // Handle form submission
+      checkoutForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Basic validation already by required attributes
+
+        // Simulate order submission
+        messageDiv.textContent =
+          "Order placed successfully! Thank you for choosing MediBharat.";
+        checkoutForm.reset();
+        localStorage.removeItem("cart");
+        localStorage.removeItem("uploadedPrescriptionName");
+
+        setTimeout(() => {
+          window.location.href = "index.html"; // redirect home after 3 seconds
+        }, 3000);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Find Stores Selling Medicine</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f6fa;
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        color: #333;
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+      .search-container {
+        display: flex;
+        max-width: 700px;
+        width: 100%;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        background: #fff;
+        overflow: hidden;
+      }
+      #searchInput {
+        flex: 1;
+        padding: 15px 20px;
+        border: none;
+        font-size: 18px;
+        outline: none;
+      }
+      #searchBtn {
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 0 30px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background-color 0.3s ease;
+      }
+      #searchBtn:hover {
+        background-color: #ff4b4b;
+      }
+      #results {
+        max-width: 700px;
+        width: 100%;
+        margin-bottom: 40px;
+      }
+      .store {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s ease;
+        display: flex;
+        gap: 15px;
+      }
+      .store:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+      .store img {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 1px solid #ddd;
+      }
+      .store-details {
+        flex: 1;
+      }
+      .store h3 {
+        margin: 0 0 8px 0;
+        color: #2d3436;
+        font-weight: 700;
+        font-size: 22px;
+      }
+      .store p {
+        margin: 4px 0;
+        font-size: 16px;
+        color: #636e72;
+      }
+      .badges {
+        margin-top: 8px;
+      }
+      .badge {
+        display: inline-block;
+        background: #2ecc71;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 8px;
+        user-select: none;
+      }
+      .badge.offer {
+        background: #e67e22;
+      }
+      .medicines-list {
+        margin-top: 10px;
+      }
+      .medicines-list strong {
+        font-weight: 600;
+      }
+      .medicines-list-item {
+        display: flex;
+        align-items: center;
+        margin-top: 6px;
+        gap: 12px;
+      }
+      .medicines-list-item span {
+        background: #dfe6e9;
+        color: #2d3436;
+        border-radius: 14px;
+        padding: 6px 14px;
+        font-size: 14px;
+        user-select: none;
+      }
+      .qty-input {
+        width: 50px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-align: center;
+      }
+      .add-to-cart-btn {
+        background-color: #0984e3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+      .add-to-cart-btn:disabled {
+        background-color: #74b9ff88;
+        cursor: not-allowed;
+      }
+      .add-to-cart-btn:hover:not(:disabled) {
+        background-color: #74b9ff;
+      }
+      #cart {
+        max-width: 700px;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        color: #2d3436;
+      }
+      #cart h2 {
+        margin-top: 0;
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding: 8px 0;
+        font-size: 16px;
+        gap: 12px;
+      }
+      .cart-item:last-child {
+        border-bottom: none;
+      }
+      .cart-item-info {
+        flex: 1;
+      }
+      .cart-qty-input {
+        width: 50px;
+        padding: 4px 8px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-align: center;
+      }
+      .cart-item button {
+        background: #d63031;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+      .cart-item button:hover {
+        background: #e17055;
+      }
+      .empty-cart {
+        font-style: italic;
+        color: #636e72;
+        text-align: center;
+        padding: 15px 0;
+      }
+      @media (max-width: 720px) {
+        .store {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .store img {
+          margin-bottom: 12px;
+        }
+        .store-details {
+          width: 100%;
+        }
+        .medicines-list-item {
+          justify-content: center;
+        }
+        .cart-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .cart-item button {
+          margin-top: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Find Stores Selling Medicine</h1>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Type medicine name " />
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <div id="results"></div>
+
+    <div id="cart">
+      <h2>Your Cart</h2>
+      <div id="cartItems">
+        <p class="empty-cart">Your cart is empty.</p>
+      </div>
+    </div>
+
+    <script>
+      const storesDB = [
+        {
+          id: 1,
+          name: "HealthPlus Pharmacy",
+          address: "123, Rajpath Road, Delhi",
+          rating: 4.6,
+          contact: "011-23456789",
+          medicines: [
+            { name: "Crocin", price: 50 },
+            { name: "Telma 40", price: 120 },
+            { name: "Paracetamol", price: 40 },
+          ],
+          badges: ["Verified", "Fast Delivery"],
+          img: "https://images.unsplash.com/photo-1580281657521-b61b9c2d5c35?auto=format&fit=crop&w=120&q=80",
+          openingHours: "8:00 AM - 10:00 PM",
+        },
+        {
+          id: 2,
+          name: "CareWell Pharmacy",
+          address: "45, Connaught Place, Delhi",
+          rating: 4.2,
+          contact: "011-98765432",
+          medicines: [
+            { name: "Crocin", price: 55 },
+            { name: "Ibuprofen", price: 90 },
+          ],
+          badges: ["Verified", "Offers Available"],
+          img: "https://images.unsplash.com/photo-1588776814546-1cb0dd60b6b1?auto=format&fit=crop&w=120&q=80",
+          openingHours: "9:00 AM - 9:00 PM",
+        },
+        {
+          id: 3,
+          name: "MediTrust Pharmacy",
+          address: "78, Lajpat Nagar, Delhi",
+          rating: 4.8,
+          contact: "011-66778899",
+          medicines: [
+            { name: "Telma 40", price: 110 },
+            { name: "Vitamin C", price: 70 },
+          ],
+          badges: ["Fast Delivery"],
+          img: "https://images.unsplash.com/photo-1580281657521-b61b9c2d5c35?auto=format&fit=crop&w=120&q=80",
+          openingHours: "7:30 AM - 8:30 PM",
+        },
+        {
+          id: 4,
+          name: "CityCare Pharmacy",
+          address: "56, Dwarka Sector 12, Delhi",
+          rating: 4.0,
+          contact: "011-55667788",
+          medicines: [
+            { name: "Paracetamol", price: 45 },
+            { name: "Crocin", price: 52 },
+          ],
+          badges: [],
+          img: "https://images.unsplash.com/photo-1564295691461-1e1381032c3e?auto=format&fit=crop&w=120&q=80",
+          openingHours: "10:00 AM - 8:00 PM",
+        },
+      ];
+
+      // Load cart from localStorage or initialize
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      function saveCart() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function storeHasMedicine(store, medicineName) {
+        return store.medicines.some(
+          (med) => med.name.toLowerCase() === medicineName.toLowerCase()
+        );
+      }
+
+      function getMatchingMedicines(store, query) {
+        const q = query.toLowerCase();
+        return store.medicines.filter((med) =>
+          med.name.toLowerCase().includes(q)
+        );
+      }
+
+      function renderBadges(badges) {
+        return badges
+          .map((b) => {
+            const cls = b.toLowerCase().includes("offer")
+              ? "badge offer"
+              : "badge";
+            return `<span class="${cls}">${b}</span>`;
+          })
+          .join("");
+      }
+
+      function renderResults(medicineQuery) {
+        const matchedStores = storesDB.filter((store) =>
+          store.medicines.some((med) =>
+            med.name.toLowerCase().includes(medicineQuery.toLowerCase())
+          )
+        );
+
+        if (matchedStores.length === 0) {
+          return "<p>No stores found for this medicine.</p>";
+        }
+
+        return matchedStores
+          .map((store) => {
+            const matchingMedicines = getMatchingMedicines(
+              store,
+              medicineQuery
+            );
+            return `
+          <div class="store">
+            <img src="${store.img}" alt="${store.name} Image" />
+            <div class="store-details">
+              <h3>${store.name}</h3>
+              <p><strong>Address:</strong> ${store.address}</p>
+              <p><strong>Contact:</strong> ${store.contact}</p>
+              <p><strong>Opening Hours:</strong> ${store.openingHours}</p>
+              <p><strong>Rating:</strong> ${store.rating} ⭐</p>
+              <div class="badges">${renderBadges(store.badges)}</div>
+              <div class="medicines-list">
+                <strong>Available Medicine(s):</strong><br />
+                ${matchingMedicines
+                  .map(
+                    (med) => `
+                  <div class="medicines-list-item">
+                    <span>${med.name} - ₹${med.price}</span>
+                    <input type="number" min="1" value="1" class="qty-input" id="qty-${
+                      store.id
+                    }-${med.name.replace(/\s+/g, "")}" />
+                    <button class="add-to-cart-btn" id="btn-${
+                      store.id
+                    }-${med.name.replace(/\s+/g, "")}">
+                      Add to Cart
+                    </button>
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      // Update cart UI with quantity and total price
+      function updateCartUI() {
+        const cartItemsDiv = document.getElementById("cartItems");
+        if (cart.length === 0) {
+          cartItemsDiv.innerHTML =
+            '<p class="empty-cart">Your cart is empty.</p>';
+          return;
+        }
+
+        cartItemsDiv.innerHTML = cart
+          .map(
+            (item, index) => `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <strong>${item.medicine}</strong> from <em>${
+              item.store
+            }</em> - ₹${item.price} × 
+              <input
+                type="number"
+                class="cart-qty-input"
+                min="1"
+                value="${item.quantity}"
+                data-index="${index}"
+                aria-label="Quantity for ${item.medicine}"
+              />
+              = ₹${(item.price * item.quantity).toFixed(2)}
+            </div>
+            <button data-index="${index}">Remove</button>
+          </div>
+        `
+          )
+          .join("");
+
+        // Attach listeners for quantity inputs in cart
+        const qtyInputs = document.querySelectorAll(".cart-qty-input");
+        qtyInputs.forEach((input) => {
+          input.addEventListener("change", (e) => {
+            let newQty = parseInt(e.target.value);
+            if (isNaN(newQty) || newQty < 1) {
+              newQty = 1;
+              e.target.value = 1;
+            }
+            const idx = e.target.getAttribute("data-index");
+            cart[idx].quantity = newQty;
+            saveCart();
+            updateCartUI();
+          });
+        });
+
+        // Attach listeners for remove buttons in cart
+        const removeButtons = cartItemsDiv.querySelectorAll("button");
+        removeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const idx = btn.getAttribute("data-index");
+            cart.splice(idx, 1);
+            saveCart();
+            updateCartUI();
+          });
+        });
+      }
+
+      // Add to cart function including quantity
+      function addToCart(storeId, medicineName, price) {
+        const qtyInput = document.getElementById(
+          `qty-${storeId}-${medicineName.replace(/\s+/g, "")}`
+        );
+        let quantity = 1;
+        if (qtyInput) {
+          quantity = parseInt(qtyInput.value);
+          if (isNaN(quantity) || quantity < 1) {
+            alert("Please enter a valid quantity (1 or more).");
+            return;
+          }
+        }
+
+        const store = storesDB.find((s) => s.id === storeId);
+        if (!store) return;
+
+        // Check if same store+medicine already in cart, then update quantity
+        const existingIndex = cart.findIndex(
+          (item) => item.store === store.name && item.medicine === medicineName
+        );
+        if (existingIndex >= 0) {
+          cart[existingIndex].quantity += quantity;
+        } else {
+          cart.push({
+            store: store.name,
+            medicine: medicineName,
+            price,
+            quantity,
+          });
+        }
+        saveCart();
+        alert(
+          `Added ${quantity} x "${medicineName}" from "${store.name}" to cart!`
+        );
+        updateCartUI();
+      }
+
+      const searchBtn = document.getElementById("searchBtn");
+      const resultsDiv = document.getElementById("results");
+      const searchInput = document.getElementById("searchInput");
+
+      function attachAddToCartListeners() {
+        storesDB.forEach((store) => {
+          store.medicines.forEach((med) => {
+            const btnId = `btn-${store.id}-${med.name.replace(/\s+/g, "")}`;
+            const qtyId = `qty-${store.id}-${med.name.replace(/\s+/g, "")}`;
+            const btn = document.getElementById(btnId);
+            const qtyInput = document.getElementById(qtyId);
+            if (btn && qtyInput) {
+              // Disable add-to-cart button if quantity <= 0
+              function toggleButton() {
+                btn.disabled = !(parseInt(qtyInput.value) > 0);
+              }
+              qtyInput.addEventListener("input", () => {
+                if (qtyInput.value === "") return;
+                toggleButton();
+              });
+              toggleButton();
+
+              btn.addEventListener("click", () => {
+                addToCart(store.id, med.name, med.price);
+              });
+            }
+          });
+        });
+      }
+
+      function doSearch() {
+        const query = searchInput.value.trim();
+        if (!query) {
+          resultsDiv.innerHTML =
+            "<p>Please enter a medicine name to search.</p>";
+          return;
+        }
+        resultsDiv.innerHTML = renderResults(query);
+        attachAddToCartListeners();
+      }
+
+      searchBtn.addEventListener("click", doSearch);
+
+      // Also search on Enter key inside input
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          doSearch();
+        }
+      });
+
+      // On load, render cart
+      updateCartUI();
+    </script>
+  </body>
+</html>

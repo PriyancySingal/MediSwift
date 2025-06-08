@@ -1,131 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - MediBharat</title>
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Top Navigation -->
-        <nav class="top-nav">
-            <div class="container">
-                <div class="profile-header">
-                    <div class="welcome-text">
-                        <h2>Welcome, Pragati 👋</h2>
-                        <p>Good morning! Ready to order?</p>
-                    </div>
-                    <div class="profile-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                </div>
-                
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search for medicines or health products">
-                </div>
+      <!-- Top Navigation -->
+      <nav class="top-nav">
+        <div
+          class="container"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <div
+            class="profile-header"
+            style="display: flex; align-items: center; gap: 1rem"
+          >
+            <div class="welcome-text">
+              <h2>Welcome, Pragati 👋</h2>
+              <p>Good morning! Ready to order?</p>
             </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container">
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <button class="action-btn primary">
-                        <i class="fas fa-upload"></i>
-                        <span>Upload Prescription</span>
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-search-plus"></i>
-                        <span>Find Medicines</span>
-                    </button>
-                </div>
-
-                <!-- Recent Orders -->
-                <section class="recent-orders">
-                    <div class="section-header">
-                        <h3>Recent Orders</h3>
-                        <a href="orders.html" class="view-all">View All</a>
-                    </div>
-                    <div class="order-card">
-                        <div class="order-status pending">In Transit</div>
-                        <div class="order-details">
-                            <h4>Order #MB12345</h4>
-                            <p>Paracetamol, Azithromycin, Vitamin C</p>
-                            <div class="order-meta">
-                                <span><i class="far fa-calendar"></i> 5 June 2023</span>
-                                <span><i class="fas fa-rupee-sign"></i> 245.00</span>
-                            </div>
-                        </div>
-                        <div class="order-actions">
-                            <button class="btn-icon"><i class="fas fa-redo"></i> Reorder</button>
-                            <button class="btn-icon"><i class="fas fa-eye"></i> Track</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Refill Reminder -->
-                <section class="refill-reminder">
-                    <div class="section-header">
-                        <h3>Refill Reminder</h3>
-                    </div>
-                    <div class="reminder-card">
-                        <div class="reminder-icon">
-                            <i class="fas fa-pills"></i>
-                        </div>
-                        <div class="reminder-details">
-                            <h4>Time for Refill</h4>
-                            <p>Your prescription is due for refill in 3 days</p>
-                            <button class="btn-text">Refill Now</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Quick Links -->
-                <div class="quick-links">
-                    <a href="prescriptions.html" class="quick-link">
-                        <i class="fas fa-prescription"></i>
-                        <span>My Prescriptions</span>
-                    </a>
-                    <a href="addresses.html" class="quick-link">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Saved Addresses</span>
-                    </a>
-                    <a href="family.html" class="quick-link">
-                        <i class="fas fa-users"></i>
-                        <span>Family Members</span>
-                    </a>
-                </div>
+            <div class="profile-icon">
+              <i class="fas fa-user-circle"></i>
             </div>
-        </main>
+          </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
+          <div style="display: flex; align-items: center; gap: 1rem">
+            <!-- Search Bar -->
+            <div class="search-bar">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                id="dashboardSearchInput"
+                placeholder="Search for medicines or health products"
+              />
+            </div>
+
+            <!-- Cart Icon -->
+            <div class="cart-icon">
+              <a
+                href="cart.html"
+                title="View Cart"
+                style="color: #000; font-size: 1.3rem; position: relative"
+              >
+                <i class="fas fa-shopping-cart"></i>
+                <span
+                  class="cart-count"
+                  style="
+                    position: absolute;
+                    top: -8px;
+                    right: -10px;
+                    background: #2af112;
+                    color: #000;
+                    border-radius: 50%;
+                    padding: 2px 6px;
+                    font-size: 0.75rem;
+                    font-weight: bold;
+                  "
+                  >3</span
+                >
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="container">
+          <!-- Quick Actions -->
+          <div class="quick-actions">
+            <button class="action-btn primary">
+              <i class="fas fa-upload"></i>
+              <span>Upload Prescription</span>
+            </button>
+            <!-- Changed this button to a link for better semantics -->
+            <a
+              href="catalog.html"
+              class="action-btn"
+              style="text-decoration: none"
+            >
+              <i class="fas fa-search-plus"></i>
+              <span>Find Medicines</span>
             </a>
-            <a href="orders.html" class="nav-item">
-                <i class="fas fa-shopping-bag"></i>
-                <span>Orders</span>
+            <a
+              href="cart.html"
+              class="action-btn"
+              style="text-decoration: none"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              <span>View Cart</span>
             </a>
-            <a href="upload.html" class="nav-item upload-btn">
-                <i class="fas fa-plus"></i>
+          </div>
+
+          <!-- Recent Orders -->
+          <section class="recent-orders">
+            <div class="section-header">
+              <h3>Recent Orders</h3>
+              <a href="orders.html" class="view-all">View All</a>
+            </div>
+            <div class="order-card">
+              <div class="order-status pending">In Transit</div>
+              <div class="order-details">
+                <h4>Order #MB12345</h4>
+                <p>Paracetamol, Azithromycin, Vitamin C</p>
+                <div class="order-meta">
+                  <span><i class="far fa-calendar"></i> 5 June 2023</span>
+                  <span><i class="fas fa-rupee-sign"></i> 245.00</span>
+                </div>
+              </div>
+              <div class="order-actions">
+                <button class="btn-icon">
+                  <i class="fas fa-redo"></i> Reorder
+                </button>
+                <button class="btn-icon">
+                  <i class="fas fa-eye"></i> Track
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Refill Reminder -->
+          <section class="refill-reminder">
+            <div class="section-header">
+              <h3>Refill Reminder</h3>
+            </div>
+            <div class="reminder-card">
+              <div class="reminder-icon">
+                <i class="fas fa-pills"></i>
+              </div>
+              <div class="reminder-details">
+                <h4>Time for Refill</h4>
+                <p>Your prescription is due for refill in 3 days</p>
+                <button class="btn-text">Refill Now</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Quick Links -->
+          <div class="quick-links">
+            <a href="prescriptions.html" class="quick-link">
+              <i class="fas fa-prescription"></i>
+              <span>My Prescriptions</span>
             </a>
-            <a href="prescriptions.html" class="nav-item">
-                <i class="fas fa-prescription"></i>
-                <span>Prescriptions</span>
+            <a href="addresses.html" class="quick-link">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Saved Addresses</span>
             </a>
-            <a href="account.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
+            <a href="family.html" class="quick-link">
+              <i class="fas fa-users"></i>
+              <span>Family Members</span>
             </a>
-        </nav>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="orders.html" class="nav-item">
+          <i class="fas fa-shopping-bag"></i>
+          <span>Orders</span>
+        </a>
+        <a href="upload.html" class="nav-item upload-btn">
+          <i class="fas fa-plus"></i>
+        </a>
+        <a href="prescriptions.html" class="nav-item">
+          <i class="fas fa-prescription"></i>
+          <span>Prescriptions</span>
+        </a>
+        <a href="account.html" class="nav-item">
+          <i class="fas fa-user"></i>
+          <span>Account</span>
+        </a>
+        <a href="search.html" class="find-medicine-btn">
+          <i class="fas fa-search"></i> Find Medicine
+        </a>
+
+        <!-- Optional: Add Cart to bottom nav as well -->
+        <a href="cart.html" class="nav-item">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Cart</span>
+        </a>
+      </nav>
     </div>
 
     <script src="js/dashboard.js"></script>
-</body>
+  </body>
 </html>

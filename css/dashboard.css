@@ -718,3 +718,29 @@ body {
       grid-template-columns: 1fr 1fr;
   }
 }
+
+.search-results {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-height: 300px;
+  overflow-y: auto;
+  position: absolute;
+  width: 100%;
+  z-index: 200;
+  display: none;
+  /* toggle to block when results present */
+}
+
+.search-results.active {
+  display: block;
+}
+
+.search-results li {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background-color: var(--primary-light);
+}
