@@ -1,238 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MediBharat Cart</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f9f7f7;
-        margin: 0;
-        padding: 1rem;
-        color: #112d4e;
-      }
-      h1 {
-        text-align: center;
-        margin-bottom: 1rem;
-      }
-      .cart-item {
-        background: white;
-        margin-bottom: 1rem;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .item-info {
-        max-width: 70%;
-      }
-      .item-name {
-        font-weight: bold;
-        font-size: 1.1rem;
-        margin: 0 0 0.3rem;
-      }
-      .item-pharmacy {
-        font-size: 0.9rem;
-        color: #555;
-        margin-bottom: 0.5rem;
-      }
-      input[type="number"] {
-        width: 60px;
-        padding: 0.3rem;
-        font-size: 1rem;
-        border: 2px solid #dbe2ef;
-        border-radius: 5px;
-        margin-right: 0.5rem;
-      }
-      button {
-        background: #3f72af;
-        color: white;
-        border: none;
-        padding: 0.4rem 0.8rem;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background-color 0.3s;
-      }
-      button:hover {
-        background-color: #112d4e;
-      }
-      .total {
-        font-weight: bold;
-        font-size: 1.2rem;
-        margin-top: 1rem;
-        text-align: right;
-      }
-      .actions {
-        text-align: center;
-        margin-top: 1.5rem;
-      }
-      .actions input[type="file"] {
-        margin-bottom: 1rem;
-      }
-      a {
-        text-decoration: none;
-        color: #3f72af;
-        font-weight: 600;
-        margin-top: 1rem;
-        display: inline-block;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Your Cart</h1>
 
-    <div id="cartItems"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart - MediBharat</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #3f72af;
+      --secondary: #112d4e;
+      --accent: #ff6b6b;
+      --light: #f9f7f7;
+      --dark: #112d4e;
+      --gray: #dbe2ef;
+      --text: #2d3436;
+      --text-light: #636e72;
+    }
 
-    <div class="total" id="totalPrice">Total: ₹0</div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-    <div class="actions">
-      <label for="prescriptionUpload">Upload Prescription (if needed):</label
-      ><br />
-      <input type="file" id="prescriptionUpload" accept="image/*,.pdf" /><br />
-      <button id="checkoutBtn">Proceed to Checkout</button>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+      margin-bottom: 30px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .cart-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cart-header h1 {
+      font-size: 2rem;
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .cart-container {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+    }
+
+    .cart-items {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-item {
+      display: flex;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-image {
+      width: 100px;
+      height: 100px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .item-store {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .quantity-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--gray);
+      background: white;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-input {
+      width: 50px;
+      height: 30px;
+      text-align: center;
+      border: 1px solid var(--gray);
+      margin: 0 5px;
+      border-radius: 4px;
+    }
+
+    .remove-btn {
+      margin-left: 15px;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .remove-btn i {
+      margin-right: 5px;
+    }
+
+    .cart-summary {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .summary-total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 20px 0;
+      padding-top: 15px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background: var(--secondary);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 50px 0;
+    }
+
+    .empty-cart i {
+      font-size: 4rem;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    .empty-cart h2 {
+      margin-bottom: 15px;
+      color: var(--text);
+    }
+
+    .empty-cart p {
+      color: var(--text-light);
+      margin-bottom: 25px;
+    }
+
+    .continue-shopping {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .continue-shopping:hover {
+      background: var(--secondary);
+    }
+
+    @media (max-width: 768px) {
+      .cart-container {
+        grid-template-columns: 1fr;
+      }
+
+      .cart-summary {
+        position: static;
+        margin-top: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="dashboard.html" class="logo">MediBharat</a>
+        <a href="catalog.html" style="color: var(--primary); text-decoration: none;">
+          <i class="fas fa-arrow-left"></i> Back to Shop
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="cart-header">
+      <h1>Your Shopping Cart</h1>
+      <p>Review and manage your items</p>
     </div>
 
-    <div style="text-align: center; margin-top: 2rem">
-      <a href="catalog.html">← Back to Search Medicines</a>
+    <div id="cartContent">
+      <!-- Cart items will be dynamically inserted here -->
     </div>
+  </div>
 
-    <script>
-      // Same medicine, pharmacy, and inventory data from catalog.html
-      const medicines = [
-        { id: 1, name: "Paracetamol 500mg" },
-        { id: 2, name: "Azithromycin 250mg" },
-        { id: 3, name: "Cetirizine 10mg" },
-        { id: 4, name: "Amoxicillin 500mg" },
-      ];
+  <script>
+    // Get cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContent = document.getElementById('cartContent');
 
-      const pharmacies = [
-        {
-          id: 101,
-          name: "City Pharmacy",
-          location: "MG Road",
-          contact: "9876543210",
-        },
-        {
-          id: 102,
-          name: "HealthPlus Chemist",
-          location: "Sector 12",
-          contact: "9123456789",
-        },
-        {
-          id: 103,
-          name: "24x7 Meds",
-          location: "Near Bus Stand",
-          contact: "9988776655",
-        },
-      ];
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+    });
 
-      const inventory = [
-        { medicineId: 1, pharmacyId: 101, price: 20, inStock: true },
-        { medicineId: 1, pharmacyId: 103, price: 22, inStock: false },
-        { medicineId: 2, pharmacyId: 102, price: 45, inStock: true },
-        { medicineId: 3, pharmacyId: 101, price: 15, inStock: true },
-        { medicineId: 3, pharmacyId: 102, price: 14, inStock: true },
-        { medicineId: 4, pharmacyId: 103, price: 55, inStock: true },
-      ];
-
-      const cartItemsDiv = document.getElementById("cartItems");
-      const totalPriceEl = document.getElementById("totalPrice");
-      const checkoutBtn = document.getElementById("checkoutBtn");
-
-      // Load cart from localStorage or empty array
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-      function saveCart() {
-        localStorage.setItem("cart", JSON.stringify(cart));
-        renderCart();
+    // Render cart items
+    function renderCart() {
+      if (cart.length === 0) {
+        cartContent.innerHTML = `
+            <div class="empty-cart">
+              <i class="fas fa-shopping-cart"></i>
+              <h2>Your cart is empty</h2>
+              <p>Looks like you haven't added any items to your cart yet.</p>
+              <a href="catalog.html" class="continue-shopping">Continue Shopping</a>
+            </div>
+          `;
+        return;
       }
 
-      function getPrice(medId, pharmId) {
-        const item = inventory.find(
-          (i) => i.medicineId === medId && i.pharmacyId === pharmId
-        );
-        return item ? item.price : 0;
-      }
 
-      function renderCart() {
-        cartItemsDiv.innerHTML = "";
-        if (cart.length === 0) {
-          cartItemsDiv.innerHTML =
-            '<p>Your cart is empty. <a href="catalog.html">Search medicines</a>.</p>';
-          totalPriceEl.textContent = "Total: ₹0";
-          checkoutBtn.disabled = true;
-          return;
-        }
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const deliveryCharge = 40;
+      const total = subtotal + deliveryCharge;
 
-        checkoutBtn.disabled = false;
-        let total = 0;
+      // Generate cart items HTML
+      const cartItemsHTML = `
+          <div class="cart-container">
+            <div class="cart-items">
+              ${cart.map((item, index) => `
+                <div class="cart-item" data-index="${index}">
+                  <div class="item-image">
+                    <i class="fas fa-pills"></i>
+                  </div>
+                  <div class="item-details">
+                    <div class="item-name">${item.medicineName || item.medicine}</div>
+                    <div class="item-store">${item.storeName || item.store}</div>
+                    <div class="item-price">₹${item.price * item.quantity}</div>
+                    <div class="item-actions">
+                      <button class="quantity-btn minus" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
+                      <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
+                      <button class="quantity-btn plus" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+                      <button class="remove-btn" onclick="removeFromCart(${index})">
+                        <i class="far fa-trash-alt"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
 
-        cart.forEach((item, index) => {
-          const med = medicines.find((m) => m.id === item.medicineId);
-          const pharm = pharmacies.find((p) => p.id === item.pharmacyId);
-          const price = getPrice(item.medicineId, item.pharmacyId);
-          const subtotal = price * item.qty;
-          total += subtotal;
-
-          const itemDiv = document.createElement("div");
-          itemDiv.classList.add("cart-item");
-
-          itemDiv.innerHTML = `
-          <div class="item-info">
-            <p class="item-name">${med.name}</p>
-            <p class="item-pharmacy">${pharm.name}, ${pharm.location}</p>
-            <p>Price: ₹${price} x </p>
-          </div>
-          <div>
-            <input type="number" min="1" value="${item.qty}" data-index="${index}" />
-            <button data-index="${index}">Remove</button>
-            <p>₹${subtotal}</p>
+            <div class="cart-summary">
+              <h3 class="summary-title">Order Summary</h3>
+              <div class="summary-row">
+                <span>Subtotal (${cart.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                <span>₹${subtotal.toFixed(2)}</span>
+              </div>
+              <div class="summary-row">
+                <span>Delivery Fee</span>
+                <span>₹${deliveryCharge.toFixed(2)}</span>
+              </div>
+              <div class="summary-total">
+                <span>Total</span>
+                <span>₹${total.toFixed(2)}</span>
+              </div>
+              <button class="checkout-btn" onclick="proceedToCheckout()">
+                Proceed to Checkout
+              </button>
+            </div>
           </div>
         `;
 
-          cartItemsDiv.appendChild(itemDiv);
-        });
+      cartContent.innerHTML = cartItemsHTML;
+    }
 
-        totalPriceEl.textContent = `Total: ₹${total}`;
-        addListeners();
-      }
+    // Update item quantity
+    function updateQuantity(index, newQuantity) {
+      newQuantity = parseInt(newQuantity);
+      if (isNaN(newQuantity) || newQuantity < 1) return;
 
-      function addListeners() {
-        // Quantity change listeners
-        const qtyInputs = cartItemsDiv.querySelectorAll('input[type="number"]');
-        qtyInputs.forEach((input) => {
-          input.addEventListener("change", (e) => {
-            const idx = e.target.dataset.index;
-            let val = parseInt(e.target.value);
-            if (isNaN(val) || val < 1) val = 1;
-            cart[idx].qty = val;
-            saveCart();
-          });
-        });
-
-        // Remove buttons
-        const removeBtns = cartItemsDiv.querySelectorAll("button");
-        removeBtns.forEach((btn) => {
-          btn.addEventListener("click", (e) => {
-            const idx = e.target.dataset.index;
-            cart.splice(idx, 1);
-            saveCart();
-          });
-        });
-      }
-
-      checkoutBtn.addEventListener("click", () => {
-        // Optional: Check if prescription uploaded or required before proceeding
-        // For now just redirect to checkout.html
-        window.location.href = "checkout.html";
-      });
-
-      // Initial render
+      cart[index].quantity = newQuantity;
+      saveCart();
       renderCart();
-    </script>
-  </body>
+    }
+
+    // Remove item from cart
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      saveCart();
+      renderCart();
+    }
+
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Proceed to checkout
+    function proceedToCheckout() {
+      if (cart.length === 0) {
+        alert('Your cart is empty. Add some items before checkout.');
+        return;
+      }
+      window.location.href = 'checkout.html';
+    }
+  </script>
+</body>
+
 </html>

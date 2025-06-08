@@ -1,43 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP - MediBharat</title>
-    <link rel="stylesheet" href="css/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .otp-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .otp-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 2rem 0;
+        }
+
+        .otp-input input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.2);
+        }
+
+        .resend-otp {
+            color: var(--primary);
+            cursor: pointer;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .resend-otp:disabled {
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        #countdown {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        #recaptcha-container {
+            display: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="logo">
-                <img src="image.png" alt="MediBharat" class="logo-img">
-                <h1>Verify OTP</h1>
-                <p class="subtitle">Enter the 6-digit OTP sent to <span id="phoneNumber">+91 ••••• •••89</span></p>
+    <div class="otp-container">
+        <h2>Verify OTP</h2>
+        <p>We've sent a 6-digit verification code to <span id="phoneNumberDisplay"></span></p>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form id="otpForm">
+            <div class="otp-input">
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" autocomplete="one-time-code" required>
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d" inputmode="numeric" required>
             </div>
-            
-            <form id="otpForm" class="auth-form">
-                <div class="otp-container">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
-                </div>
-                
-                <p class="resend-text">
-                    Didn't receive OTP? 
-                    <a href="#" id="resendOtp" class="text-primary">Resend OTP</a>
-                    <span id="timer" class="text-muted">(30s)</span>
-                </p>
-                
-                <button type="submit" class="btn btn-primary btn-block">
-                    Verify & Continue <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-primary" id="verifyBtn" disabled>
+                Verify OTP
+            </button>
+        </form>
+
+        <div class="resend-otp-container">
+            <p>Didn't receive the code? <span class="resend-otp" id="resendOtp">Resend OTP</span> <span
+                    id="countdown"></span></p>
         </div>
+
+        <div id="recaptcha-container"></div>
     </div>
-    <script src="js/auth.js"></script>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const phoneNumber = urlParams.get('phone');
+        let recaptchaVerifier;
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize reCAPTCHA verifier
+            recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible'
+            });
+
+            // Enable the verify button
+            document.getElementById('verifyBtn').disabled = false;
+        });
+
+        // Display phone number
+        if (phoneNumber) {
+            document.getElementById('phoneNumberDisplay').textContent = phoneNumber;
+        } else {
+            // Redirect back to login if no phone number is provided
+            window.location.href = 'login.html';
+        }
+
+        // Auto-focus first input
+        const inputs = document.querySelectorAll('.otp-input input');
+        inputs[0].focus();
+
+        // Handle OTP input
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const otp = Array.from(inputs).map(input => input.value).join('');
+            const verificationId = window.confirmationResult?.verificationId;
+
+            if (otp.length !== 6) {
+                showError('Please enter a valid 6-digit OTP');
+                return;
+            }
+
+            try {
+                const verifyBtn = document.getElementById('verifyBtn');
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = 'Verifying...';
+
+                showMessage('Verifying OTP...', 'success');
+
+                // Verify OTP
+                const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, otp);
+                await firebase.auth().signInWithCredential(credential);
+
+                // OTP verification successful
+                showMessage('Verification successful! Redirecting...', 'success');
+
+                // Redirect to dashboard or next page
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                showError('Invalid OTP. Please try again.');
+                document.getElementById('verifyBtn').disabled = false;
+                document.getElementById('verifyBtn').textContent = 'Verify OTP';
+            }
+        });
+
+        // Handle resend OTP
+        let countdown = 30;
+        const countdownElement = document.getElementById('countdown');
+        const resendButton = document.getElementById('resendOtp');
+
+        function startCountdown() {
+            resendButton.style.pointerEvents = 'none';
+            resendButton.style.opacity = '0.6';
+            countdownElement.textContent = `(${countdown}s)`;
+
+            const timer = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = `(${countdown}s)`;
+
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    resendButton.style.pointerEvents = 'auto';
+                    resendButton.style.opacity = '1';
+                    countdownElement.textContent = '';
+                }
+            }, 1000);
+        }
+
+        resendButton.addEventListener('click', async () => {
+            if (countdown > 0) return;
+
+            try {
+                // Reset countdown
+                countdown = 30;
+                startCountdown();
+
+                // Show loading state
+                showMessage('Sending OTP...', 'success');
+
+                // Re-initialize reCAPTCHA verifier if needed
+                if (!recaptchaVerifier) {
+                    recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                        'size': 'invisible'
+                    });
+                }
+
+                // Resend OTP
+                const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, recaptchaVerifier);
+
+                // Store the new confirmation result
+                window.confirmationResult = confirmationResult;
+
+                showMessage('OTP resent successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error resending OTP:', error);
+                showError('Failed to resend OTP. Please try again.');
+
+                // Try to reinitialize reCAPTCHA on error
+                if (error.code === 'auth/missing-iframe-start') {
+                    recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                        'size': 'invisible'
+                    });
+                }
+            }
+        });
+
+        // Start initial countdown
+        startCountdown();
+
+        // Helper functions
+        function showMessage(message, type = 'error') {
+            const errorElement = document.getElementById('errorMessage');
+            const successElement = document.getElementById('successMessage');
+
+            if (type === 'error') {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                successElement.style.display = 'none';
+            } else {
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                errorElement.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+    </script>
 </body>
+
 </html>

@@ -1,552 +1,724 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Find Stores Selling Medicine</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f6fa;
-        margin: 0;
-        padding: 40px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-        color: #333;
-      }
-      h1 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-        font-weight: 700;
-      }
-      .search-container {
-        display: flex;
-        max-width: 700px;
-        width: 100%;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        background: #fff;
-        overflow: hidden;
-      }
-      #searchInput {
-        flex: 1;
-        padding: 15px 20px;
-        border: none;
-        font-size: 18px;
-        outline: none;
-      }
-      #searchBtn {
-        background-color: #ff6b6b;
-        color: white;
-        border: none;
-        padding: 0 30px;
-        cursor: pointer;
-        font-size: 18px;
-        transition: background-color 0.3s ease;
-      }
-      #searchBtn:hover {
-        background-color: #ff4b4b;
-      }
-      #results {
-        max-width: 700px;
-        width: 100%;
-        margin-bottom: 40px;
-      }
-      .store {
-        background: white;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.2s ease;
-        display: flex;
-        gap: 15px;
-      }
-      .store:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      }
-      .store img {
-        width: 120px;
-        height: 120px;
-        border-radius: 10px;
-        object-fit: cover;
-        flex-shrink: 0;
-        border: 1px solid #ddd;
-      }
-      .store-details {
-        flex: 1;
-      }
-      .store h3 {
-        margin: 0 0 8px 0;
-        color: #2d3436;
-        font-weight: 700;
-        font-size: 22px;
-      }
-      .store p {
-        margin: 4px 0;
-        font-size: 16px;
-        color: #636e72;
-      }
-      .badges {
-        margin-top: 8px;
-      }
-      .badge {
-        display: inline-block;
-        background: #2ecc71;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-right: 8px;
-        user-select: none;
-      }
-      .badge.offer {
-        background: #e67e22;
-      }
-      .medicines-list {
-        margin-top: 10px;
-      }
-      .medicines-list strong {
-        font-weight: 600;
-      }
-      .medicines-list-item {
-        display: flex;
-        align-items: center;
-        margin-top: 6px;
-        gap: 12px;
-      }
-      .medicines-list-item span {
-        background: #dfe6e9;
-        color: #2d3436;
-        border-radius: 14px;
-        padding: 6px 14px;
-        font-size: 14px;
-        user-select: none;
-      }
-      .qty-input {
-        width: 50px;
-        padding: 4px 8px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        text-align: center;
-      }
-      .add-to-cart-btn {
-        background-color: #0984e3;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 6px 14px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-      }
-      .add-to-cart-btn:disabled {
-        background-color: #74b9ff88;
-        cursor: not-allowed;
-      }
-      .add-to-cart-btn:hover:not(:disabled) {
-        background-color: #74b9ff;
-      }
-      #cart {
-        max-width: 700px;
-        width: 100%;
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        color: #2d3436;
-      }
-      #cart h2 {
-        margin-top: 0;
-        font-weight: 700;
-        margin-bottom: 15px;
-      }
-      .cart-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #ccc;
-        padding: 8px 0;
-        font-size: 16px;
-        gap: 12px;
-      }
-      .cart-item:last-child {
-        border-bottom: none;
-      }
-      .cart-item-info {
-        flex: 1;
-      }
-      .cart-qty-input {
-        width: 50px;
-        padding: 4px 8px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        text-align: center;
-      }
-      .cart-item button {
-        background: #d63031;
-        color: white;
-        border: none;
-        padding: 4px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-      }
-      .cart-item button:hover {
-        background: #e17055;
-      }
-      .empty-cart {
-        font-style: italic;
-        color: #636e72;
-        text-align: center;
-        padding: 15px 0;
-      }
-      @media (max-width: 720px) {
-        .store {
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        .store img {
-          margin-bottom: 12px;
-        }
-        .store-details {
-          width: 100%;
-        }
-        .medicines-list-item {
-          justify-content: center;
-        }
-        .cart-item {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .cart-item button {
-          margin-top: 8px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Find Stores Selling Medicine</h1>
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Type medicine name " />
-      <button id="searchBtn">Search</button>
-    </div>
 
-    <div id="results"></div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediBharat - Find Medicines</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3f72af;
+      --secondary: #112d4e;
+      --accent: #ff6b6b;
+      --light: #f9f7f7;
+      --dark: #112d4e;
+      --gray: #dbe2ef;
+      --text: #2d3436;
+      --text-light: #636e72;
+    }
 
-    <div id="cart">
-      <h2>Your Cart</h2>
-      <div id="cartItems">
-        <p class="empty-cart">Your cart is empty.</p>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px 0;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .search-container {
+      display: flex;
+      max-width: 600px;
+      width: 100%;
+      margin: 20px auto 40px;
+    }
+
+    #searchInput {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid var(--gray);
+      border-radius: 30px 0 0 30px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+    }
+
+    #searchBtn {
+      padding: 0 25px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0 30px 30px 0;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    #searchBtn:hover {
+      background: var(--secondary);
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .pharmacy-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .pharmacy-header {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .pharmacy-header h3 {
+      margin: 0 0 5px 0;
+      color: var(--primary);
+    }
+
+    .pharmacy-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .view-medicines-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 5px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+
+    .medicine-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .medicine-item:last-child {
+      border-bottom: none;
+    }
+
+    .add-to-cart-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 3px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8em;
+    }
+
+    .add-to-cart-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Cart Overlay */
+    .cart-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .cart-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Cart Sidebar */
+    #cartSidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 100%;
+      max-width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      transition: right 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #cartSidebar.active {
+      right: 0;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-header h2 {
+      margin: 0;
+      color: var(--primary);
+    }
+
+    .close-cart {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 0 10px;
+      line-height: 1;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .cart-summary {
+      padding: 20px;
+      border-top: 1px solid #eee;
+      background: #f9f9f9;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 1.1em;
+      margin: 15px 0;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background: var(--secondary);
+    }
+
+    /* Cart item styles */
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-pharmacy {
+      font-size: 0.8em;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+
+    .cart-item-price {
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quantity-btn {
+      background: var(--gray);
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .remove-item {
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 480px) {
+      #cartSidebar {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <a href="dashboard.html" class="logo">MediBharat</a>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <a href="dashboard.html" title="Go to Dashboard" style="color: var(--primary); font-size: 1.2rem;">
+          <i class="fas fa-home"></i>
+        </a>
+        <div class="cart-icon" id="cartIcon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cartCount">0</span>
+        </div>
       </div>
+    </header>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search for medicines or pharmacies...">
+      <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
     </div>
 
-    <script>
-      const storesDB = [
-        {
-          id: 1,
-          name: "HealthPlus Pharmacy",
-          address: "123, Rajpath Road, Delhi",
-          rating: 4.6,
-          contact: "011-23456789",
-          medicines: [
-            { name: "Crocin", price: 50 },
-            { name: "Telma 40", price: 120 },
-            { name: "Paracetamol", price: 40 },
-          ],
-          badges: ["Verified", "Fast Delivery"],
-          img: "https://images.unsplash.com/photo-1580281657521-b61b9c2d5c35?auto=format&fit=crop&w=120&q=80",
-          openingHours: "8:00 AM - 10:00 PM",
-        },
-        {
-          id: 2,
-          name: "CareWell Pharmacy",
-          address: "45, Connaught Place, Delhi",
-          rating: 4.2,
-          contact: "011-98765432",
-          medicines: [
-            { name: "Crocin", price: 55 },
-            { name: "Ibuprofen", price: 90 },
-          ],
-          badges: ["Verified", "Offers Available"],
-          img: "https://images.unsplash.com/photo-1588776814546-1cb0dd60b6b1?auto=format&fit=crop&w=120&q=80",
-          openingHours: "9:00 AM - 9:00 PM",
-        },
-        {
-          id: 3,
-          name: "MediTrust Pharmacy",
-          address: "78, Lajpat Nagar, Delhi",
-          rating: 4.8,
-          contact: "011-66778899",
-          medicines: [
-            { name: "Telma 40", price: 110 },
-            { name: "Vitamin C", price: 70 },
-          ],
-          badges: ["Fast Delivery"],
-          img: "https://images.unsplash.com/photo-1580281657521-b61b9c2d5c35?auto=format&fit=crop&w=120&q=80",
-          openingHours: "7:30 AM - 8:30 PM",
-        },
-        {
-          id: 4,
-          name: "CityCare Pharmacy",
-          address: "56, Dwarka Sector 12, Delhi",
-          rating: 4.0,
-          contact: "011-55667788",
-          medicines: [
-            { name: "Paracetamol", price: 45 },
-            { name: "Crocin", price: 52 },
-          ],
-          badges: [],
-          img: "https://images.unsplash.com/photo-1564295691461-1e1381032c3e?auto=format&fit=crop&w=120&q=80",
-          openingHours: "10:00 AM - 8:00 PM",
-        },
-      ];
+    <div id="results" class="stores-container">
+      <!-- Results will be displayed here -->
+    </div>
+  </div>
 
-      // Load cart from localStorage or initialize
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cartOverlay"></div>
 
-      function saveCart() {
-        localStorage.setItem("cart", JSON.stringify(cart));
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="close-cart" id="closeCart">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="empty-cart" id="emptyCart">Your cart is empty</div>
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">₹0.00</span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery Fee</span>
+        <span>₹40.00</span>
+      </div>
+      <div class="summary-total">
+        <span>Total</span>
+        <span id="cartTotal">₹40.00</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+      <a href="catalog.html"
+        style="display: block; text-align: center; margin-top: 15px; color: var(--primary);">Continue Shopping</a>
+    </div>
+  </div>
+
+  <script>
+    // Sample data for pharmacies in Delhi
+    const pharmaciesDB = [
+      {
+        id: 1,
+        name: 'Apollo Pharmacy',
+        address: 'E-44, Connaught Place, New Delhi - 110001',
+        distance: '0.5 km',
+        rating: 4.5,
+        medicines: [
+          { id: 101, name: 'Dolo 650mg Tablet', price: 30, category: 'fever', inStock: true },
+          { id: 102, name: 'Azithral 500mg Tablet', price: 120, category: 'antibiotic', inStock: true },
+          { id: 103, name: 'Crocin Advance 500mg', price: 25, category: 'fever', inStock: true },
+          { id: 104, name: 'Zincovit Tablet', price: 150, category: 'vitamin', inStock: true },
+          { id: 105, name: 'Cheston Cold Tablet', price: 45, category: 'cold', inStock: true },
+          { id: 106, name: 'Allegra 120mg Tablet', price: 110, category: 'allergy', inStock: true },
+          { id: 107, name: 'Shelcal 500mg Tablet', price: 85, category: 'calcium', inStock: true },
+          { id: 108, name: 'Becosules Capsule', price: 65, category: 'vitamin', inStock: true },
+          { id: 109, name: 'Digene Tablet', price: 45, category: 'stomach', inStock: true },
+          { id: 110, name: 'Zerodol TH8 Tablet', price: 95, category: 'pain', inStock: true }
+        ]
+      },
+      {
+        id: 2,
+        name: 'Fortis Pharmacy',
+        address: 'A-12, South Extension, New Delhi - 110049',
+        distance: '1.2 km',
+        rating: 4.3,
+        medicines: [
+          { id: 201, name: 'Paracetamol 500mg', price: 25, category: 'fever', inStock: true },
+          { id: 202, name: 'Montair LC Tablet', price: 135, category: 'allergy', inStock: true },
+          { id: 203, name: 'Zerodol SP Tablet', price: 110, category: 'pain', inStock: true },
+          { id: 204, name: 'Zincovit Tablet', price: 150, category: 'vitamin', inStock: true },
+          { id: 205, name: 'Cheston Cold Tablet', price: 45, category: 'cold', inStock: true },
+          { id: 206, name: 'Allegra 120mg Tablet', price: 110, category: 'allergy', inStock: true }
+        ]
+      },
+      {
+        id: 3,
+        name: 'Max Medico',
+        address: 'B-25, Rajouri Garden, New Delhi - 110027',
+        distance: '2.1 km',
+        rating: 4.1,
+        medicines: [
+          { id: 301, name: 'Dolo 650mg Tablet', price: 30, category: 'fever', inStock: true },
+          { id: 302, name: 'Azithral 500mg Tablet', price: 120, category: 'antibiotic', inStock: true },
+          { id: 303, name: 'Crocin Advance 500mg', price: 25, category: 'fever', inStock: true },
+          { id: 304, name: 'Zincovit Tablet', price: 150, category: 'vitamin', inStock: true }
+        ]
       }
+    ];
 
-      function storeHasMedicine(store, medicineName) {
-        return store.medicines.some(
-          (med) => med.name.toLowerCase() === medicineName.toLowerCase()
-        );
-      }
+    // Cart functionality
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartCount = document.getElementById('cartCount');
+    const cartItems = document.getElementById('cartItems');
+    const emptyCartMsg = document.getElementById('emptyCart');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartTotal = document.getElementById('cartTotal');
+    const cartIcon = document.getElementById('cartIcon');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const closeCart = document.getElementById('closeCart');
+    const cartOverlay = document.getElementById('cartOverlay');
 
-      function getMatchingMedicines(store, query) {
-        const q = query.toLowerCase();
-        return store.medicines.filter((med) =>
-          med.name.toLowerCase().includes(q)
-        );
-      }
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPharmacies(pharmaciesDB);
+      updateCartUI();
 
-      function renderBadges(badges) {
-        return badges
-          .map((b) => {
-            const cls = b.toLowerCase().includes("offer")
-              ? "badge offer"
-              : "badge";
-            return `<span class="${cls}">${b}</span>`;
-          })
-          .join("");
-      }
+      // Set up search
+      const searchBtn = document.getElementById('searchBtn');
+      const searchInput = document.getElementById('searchInput');
 
-      function renderResults(medicineQuery) {
-        const matchedStores = storesDB.filter((store) =>
-          store.medicines.some((med) =>
-            med.name.toLowerCase().includes(medicineQuery.toLowerCase())
-          )
-        );
+      searchBtn.addEventListener('click', handleSearch);
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSearch();
+      });
 
-        if (matchedStores.length === 0) {
-          return "<p>No stores found for this medicine.</p>";
+      // Cart event listeners
+      cartIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleCart();
+      });
+      closeCart.addEventListener('click', closeCartSidebar);
+      document.getElementById('checkoutBtn').addEventListener('click', checkout);
+      cartOverlay.addEventListener('click', closeCartSidebar);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && cartSidebar.classList.contains('active')) {
+          closeCartSidebar();
         }
+      });
+      cartSidebar.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
 
-        return matchedStores
-          .map((store) => {
-            const matchingMedicines = getMatchingMedicines(
-              store,
-              medicineQuery
-            );
-            return `
-          <div class="store">
-            <img src="${store.img}" alt="${store.name} Image" />
-            <div class="store-details">
-              <h3>${store.name}</h3>
-              <p><strong>Address:</strong> ${store.address}</p>
-              <p><strong>Contact:</strong> ${store.contact}</p>
-              <p><strong>Opening Hours:</strong> ${store.openingHours}</p>
-              <p><strong>Rating:</strong> ${store.rating} ⭐</p>
-              <div class="badges">${renderBadges(store.badges)}</div>
-              <div class="medicines-list">
-                <strong>Available Medicine(s):</strong><br />
-                ${matchingMedicines
-                  .map(
-                    (med) => `
-                  <div class="medicines-list-item">
-                    <span>${med.name} - ₹${med.price}</span>
-                    <input type="number" min="1" value="1" class="qty-input" id="qty-${
-                      store.id
-                    }-${med.name.replace(/\s+/g, "")}" />
-                    <button class="add-to-cart-btn" id="btn-${
-                      store.id
-                    }-${med.name.replace(/\s+/g, "")}">
-                      Add to Cart
-                    </button>
-                  </div>
-                `
-                  )
-                  .join("")}
+    // Render pharmacies
+    function renderPharmacies(pharmacies) {
+      const resultsContainer = document.getElementById('results');
+      let html = '';
+
+      pharmacies.forEach(pharmacy => {
+        // Get top 3 medicines to show in the card
+        const topMedicines = pharmacy.medicines.slice(0, 3);
+
+        html += `
+          <div class="pharmacy-card">
+            <div class="pharmacy-header" onclick="togglePharmacyMedicines(${pharmacy.id})">
+              <h3>${pharmacy.name}</h3>
+              <p>${pharmacy.address}</p>
+              <div class="pharmacy-actions">
+                <span>${pharmacy.distance} • ★ ${pharmacy.rating}</span>
+                <button class="view-medicines-btn">View Medicines</button>
               </div>
+            </div>
+            <div class="pharmacy-medicines" id="pharmacy-${pharmacy.id}-medicines" style="display: none;">
+              ${pharmacy.medicines.map(med => `
+                <div class="medicine-item">
+                  <div>
+                    <div class="medicine-name">${med.name}</div>
+                    <div class="medicine-category">${med.category} • ₹${med.price}</div>
+                  </div>
+                  <button class="add-to-cart-btn" 
+                          onclick="addToCart(${pharmacy.id}, '${pharmacy.name.replace(/'/g, "\\'")}', ${med.id}, '${med.name.replace(/'/g, "\\'")}', ${med.price})"
+                          ${!med.inStock ? 'disabled' : ''}>
+                    ${med.inStock ? 'Add to Cart' : 'Out of Stock'}
+                  </button>
+                </div>
+              `).join('')}
             </div>
           </div>
         `;
-          })
-          .join("");
+      });
+
+      resultsContainer.innerHTML = html || '<div class="no-results">No pharmacies found matching your criteria.</div>';
+    }
+
+    // Toggle pharmacy medicines
+    function togglePharmacyMedicines(pharmacyId) {
+      const medicinesEl = document.getElementById(`pharmacy-${pharmacyId}-medicines`);
+      if (medicinesEl) {
+        medicinesEl.style.display = medicinesEl.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    // Add to cart function
+    function addToCart(pharmacyId, pharmacyName, medicineId, medicineName, price) {
+      // Check if item already in cart
+      const existingItemIndex = cart.findIndex(item =>
+        item.pharmacyId === pharmacyId && item.medicineId === medicineId
+      );
+
+      if (existingItemIndex >= 0) {
+        // Update quantity if already in cart
+        cart[existingItemIndex].quantity += 1;
+      } else {
+        // Add new item to cart
+        cart.push({
+          pharmacyId,
+          pharmacyName,
+          medicineId,
+          medicineName,
+          price,
+          quantity: 1
+        });
       }
 
-      // Update cart UI with quantity and total price
-      function updateCartUI() {
-        const cartItemsDiv = document.getElementById("cartItems");
-        if (cart.length === 0) {
-          cartItemsDiv.innerHTML =
-            '<p class="empty-cart">Your cart is empty.</p>';
-          return;
-        }
+      // Save to localStorage
+      saveCart();
+      updateCartUI();
 
-        cartItemsDiv.innerHTML = cart
-          .map(
-            (item, index) => `
-          <div class="cart-item">
-            <div class="cart-item-info">
-              <strong>${item.medicine}</strong> from <em>${
-              item.store
-            }</em> - ₹${item.price} × 
-              <input
-                type="number"
-                class="cart-qty-input"
-                min="1"
-                value="${item.quantity}"
-                data-index="${index}"
-                aria-label="Quantity for ${item.medicine}"
-              />
-              = ₹${(item.price * item.quantity).toFixed(2)}
+      // Show cart sidebar if it's not already open
+      if (!cartSidebar.classList.contains('active')) {
+        toggleCart();
+      }
+    }
+
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Update cart UI
+    function updateCartUI() {
+      // Update cart count
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+
+      // Show/hide empty cart message
+      if (cart.length === 0) {
+        emptyCartMsg.style.display = 'block';
+        document.querySelector('.cart-summary').style.display = 'none';
+      } else {
+        emptyCartMsg.style.display = 'none';
+        document.querySelector('.cart-summary').style.display = 'block';
+
+        // Calculate subtotal
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const deliveryFee = 40;
+        const total = subtotal + deliveryFee;
+
+        // Update totals
+        cartSubtotal.textContent = `₹${subtotal.toFixed(2)}`;
+        cartTotal.textContent = `₹${total.toFixed(2)}`;
+
+        // Render cart items
+        cartItems.innerHTML = '';
+        cart.forEach((item, index) => {
+          const itemElement = document.createElement('div');
+          itemElement.className = 'cart-item';
+          itemElement.innerHTML = `
+            <div class="cart-item-details">
+              <div class="cart-item-name">${item.medicineName}</div>
+              <div class="cart-item-pharmacy">${item.pharmacyName}</div>
+              <div class="cart-item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
+              <button class="remove-item" onclick="removeFromCart(${index})">Remove</button>
             </div>
-            <button data-index="${index}">Remove</button>
-          </div>
-        `
-          )
-          .join("");
-
-        // Attach listeners for quantity inputs in cart
-        const qtyInputs = document.querySelectorAll(".cart-qty-input");
-        qtyInputs.forEach((input) => {
-          input.addEventListener("change", (e) => {
-            let newQty = parseInt(e.target.value);
-            if (isNaN(newQty) || newQty < 1) {
-              newQty = 1;
-              e.target.value = 1;
-            }
-            const idx = e.target.getAttribute("data-index");
-            cart[idx].quantity = newQty;
-            saveCart();
-            updateCartUI();
-          });
-        });
-
-        // Attach listeners for remove buttons in cart
-        const removeButtons = cartItemsDiv.querySelectorAll("button");
-        removeButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const idx = btn.getAttribute("data-index");
-            cart.splice(idx, 1);
-            saveCart();
-            updateCartUI();
-          });
+            <div class="cart-item-quantity">
+              <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity - 1})" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+              <span>${item.quantity}</span>
+              <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+            </div>
+          `;
+          cartItems.appendChild(itemElement);
         });
       }
+    }
 
-      // Add to cart function including quantity
-      function addToCart(storeId, medicineName, price) {
-        const qtyInput = document.getElementById(
-          `qty-${storeId}-${medicineName.replace(/\s+/g, "")}`
-        );
-        let quantity = 1;
-        if (qtyInput) {
-          quantity = parseInt(qtyInput.value);
-          if (isNaN(quantity) || quantity < 1) {
-            alert("Please enter a valid quantity (1 or more).");
-            return;
-          }
-        }
+    // Update item quantity
+    function updateQuantity(index, newQuantity) {
+      newQuantity = parseInt(newQuantity);
 
-        const store = storesDB.find((s) => s.id === storeId);
-        if (!store) return;
+      if (isNaN(newQuantity) || newQuantity < 1) {
+        // Remove item if quantity is 0 or negative
+        cart.splice(index, 1);
+      } else {
+        // Update quantity
+        cart[index].quantity = newQuantity;
+      }
 
-        // Check if same store+medicine already in cart, then update quantity
-        const existingIndex = cart.findIndex(
-          (item) => item.store === store.name && item.medicine === medicineName
-        );
-        if (existingIndex >= 0) {
-          cart[existingIndex].quantity += quantity;
+      saveCart();
+      updateCartUI();
+    }
+
+    // Remove item from cart
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      saveCart();
+      updateCartUI();
+    }
+
+    // Toggle cart function
+    function toggleCart() {
+      cartSidebar.classList.toggle('active');
+      cartOverlay.classList.toggle('active');
+      document.body.style.overflow = cartSidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Close cart function
+    function closeCartSidebar() {
+      cartSidebar.classList.remove('active');
+      cartOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Handle checkout
+    function checkout() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      // Redirect to checkout page
+      window.location.href = 'checkout.html';
+    }
+
+    // Handle search
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      if (!query) {
+        renderPharmacies(pharmaciesDB);
+        return;
+      }
+
+      const results = [];
+
+      pharmaciesDB.forEach(pharmacy => {
+        // Check if pharmacy name matches
+        if (pharmacy.name.toLowerCase().includes(query)) {
+          results.push(pharmacy);
         } else {
-          cart.push({
-            store: store.name,
-            medicine: medicineName,
-            price,
-            quantity,
-          });
-        }
-        saveCart();
-        alert(
-          `Added ${quantity} x "${medicineName}" from "${store.name}" to cart!`
-        );
-        updateCartUI();
-      }
+          // Check if any medicine name matches
+          const matchingMedicines = pharmacy.medicines.filter(med =>
+            med.name.toLowerCase().includes(query) ||
+            med.category.toLowerCase().includes(query)
+          );
 
-      const searchBtn = document.getElementById("searchBtn");
-      const resultsDiv = document.getElementById("results");
-      const searchInput = document.getElementById("searchInput");
-
-      function attachAddToCartListeners() {
-        storesDB.forEach((store) => {
-          store.medicines.forEach((med) => {
-            const btnId = `btn-${store.id}-${med.name.replace(/\s+/g, "")}`;
-            const qtyId = `qty-${store.id}-${med.name.replace(/\s+/g, "")}`;
-            const btn = document.getElementById(btnId);
-            const qtyInput = document.getElementById(qtyId);
-            if (btn && qtyInput) {
-              // Disable add-to-cart button if quantity <= 0
-              function toggleButton() {
-                btn.disabled = !(parseInt(qtyInput.value) > 0);
-              }
-              qtyInput.addEventListener("input", () => {
-                if (qtyInput.value === "") return;
-                toggleButton();
-              });
-              toggleButton();
-
-              btn.addEventListener("click", () => {
-                addToCart(store.id, med.name, med.price);
-              });
-            }
-          });
-        });
-      }
-
-      function doSearch() {
-        const query = searchInput.value.trim();
-        if (!query) {
-          resultsDiv.innerHTML =
-            "<p>Please enter a medicine name to search.</p>";
-          return;
-        }
-        resultsDiv.innerHTML = renderResults(query);
-        attachAddToCartListeners();
-      }
-
-      searchBtn.addEventListener("click", doSearch);
-
-      // Also search on Enter key inside input
-      searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          doSearch();
+          if (matchingMedicines.length > 0) {
+            // Create a copy of the pharmacy with only matching medicines
+            const pharmacyCopy = { ...pharmacy, medicines: matchingMedicines };
+            results.push(pharmacyCopy);
+          }
         }
       });
 
-      // On load, render cart
-      updateCartUI();
-    </script>
-  </body>
+      renderPharmacies(results);
+    }
+
+    // Make functions available globally
+    window.togglePharmacyMedicines = togglePharmacyMedicines;
+    window.addToCart = addToCart;
+    window.updateQuantity = updateQuantity;
+    window.removeFromCart = removeFromCart;
+  </script>
+</body>
+
 </html>

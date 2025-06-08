@@ -61,7 +61,6 @@ body {
 
 .welcome-text h2 {
   font-size: 1.5rem;
-  margin-bottom: 0.25rem;
 }
 
 .welcome-text p {
@@ -70,7 +69,7 @@ body {
 }
 
 .profile-icon {
-  font-size: 2rem;
+  font-size: 3rem;
   color: var(--primary);
 }
 
@@ -88,6 +87,10 @@ body {
 }
 
 .search-bar input {
+  margin-top:15px;
+  height:50px;
+  margin-bottom: 15px;
+  margin-right: 50px;
   width: 100%;
   padding: 0.875rem 1rem 0.875rem 3rem;
   border: 1px solid var(--border);

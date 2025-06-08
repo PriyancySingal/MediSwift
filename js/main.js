@@ -120,6 +120,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Wait for the DOM to be fully loaded
+  // Get the splash screen element
+  const splashScreen = document.querySelector('.splash-screen');
+  
+  // If splash screen exists, add fade-out class after 2.5 seconds
+  if (splashScreen) {
+    setTimeout(() => {
+      splashScreen.classList.add('fade-out');
+      
+      // Remove splash screen from DOM after animation completes
+      splashScreen.addEventListener('transitionend', () => {
+        if (splashScreen.classList.contains('fade-out')) {
+          splashScreen.remove();
+        }
+      });
+    }, 2500);
+  }
 });
 
 // Add a class to body when scrolled to change header style

@@ -44,6 +44,14 @@
 
   <!-- AOS Animation Library -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="./js/firebase-config.js"></script>
+
+  <!-- Auth State Management -->
+  <script src="./js/auth-state.js"></script>
 </head>
 
 <body>
@@ -60,7 +68,9 @@
           <a href="#features">Features</a>
           <a href="#how-it-works">How It Works</a>
           <a href="#testimonials">Testimonials</a>
-          <div class="auth-buttons">
+
+          <!-- Auth Buttons (Visible when not logged in) -->
+          <div id="auth-buttons" class="auth-buttons">
             <a href="login.html" class="btn btn-outline btn-sm">
               <i class="fas fa-sign-in-alt"></i> Login
             </a>
@@ -68,7 +78,24 @@
               <i class="fas fa-user-plus"></i> Sign Up
             </a>
           </div>
+
+          <!-- User Profile (Visible when logged in) -->
+          <div id="user-profile" class="user-profile" style="display: none;">
+            <a href="dashboard.html" class="user-avatar-link">
+              <div class="user-avatar">
+                <img id="userAvatar" src="" alt="User Avatar" class="avatar-img">
+                <div class="dashboard-tooltip">Go to Dashboard</div>
+              </div>
+            </a>
+            <div class="user-details">
+              <span id="userName" class="user-name"></span>
+              <a href="#" id="logoutBtn" class="logout-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </div>
+          </div>
         </div>
+
         <button class="mobile-menu-btn">
           <i class="fas fa-bars"></i>
         </button>
@@ -256,6 +283,150 @@
 
   <!-- Main JavaScript -->
   <script src="js/main.js" defer></script>
+
+  <style>
+    /* Existing styles... */
+
+    /* User Profile Styles */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 15px;
+    }
+
+    .user-avatar-link {
+      position: relative;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #3f72af;
+      transition: transform 0.2s, border-color 0.2s;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .dashboard-tooltip {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(5px);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .user-avatar-link:hover .dashboard-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(10px);
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .user-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .logout-link {
+      color: #666;
+      font-size: 12px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .logout-link:hover {
+      color: #e74c3c;
+    }
+  </style>
+
+  <script>
+    // Update auth state UI
+    function updateAuthUI(user) {
+      const authButtons = document.getElementById('auth-buttons');
+      const userProfile = document.getElementById('user-profile');
+      const userAvatar = document.getElementById('userAvatar');
+      const userName = document.getElementById('userName');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (user) {
+        // User is logged in
+        if (authButtons) authButtons.style.display = 'none';
+        if (userProfile) userProfile.style.display = 'flex';
+
+        // Update user info
+        if (userAvatar) {
+          userAvatar.src = user.photoURL || 'https://via.placeholder.com/40';
+          userAvatar.onerror = function () {
+            this.src = 'https://via.placeholder.com/40';
+          };
+        }
+
+        if (userName) {
+          userName.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+        }
+
+        // Handle logout
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+              await window.auth.signOut();
+              window.location.href = 'index.html';
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+          });
+        }
+      } else {
+        // User is not logged in
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userProfile) userProfile.style.display = 'none';
+      }
+    }
+
+    // Initialize auth state
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AuthState) {
+        const authState = new window.AuthState();
+        authState.initialize().then(user => {
+          updateAuthUI(user);
+
+          // Subscribe to auth state changes
+          authState.subscribe(updateAuthUI);
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>
