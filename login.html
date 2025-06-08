@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to MediBharat</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">
+                <img src="image.png" alt="MediBharat" class="logo-img">
+                <h1>Login to MediBharat</h1>
+            </div>
+            
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="phone" placeholder="Enter 10-digit mobile number" required 
+                               pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                </div>
+                
+                <div class="or-divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="aadhaar">Aadhaar Number (Optional)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="aadhaar" placeholder="Enter 12-digit Aadhaar" 
+                               pattern="[0-9]{12}" maxlength="12">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    Send OTP <i class="fas fa-arrow-right"></i>
+                </button>
+                
+                <div class="auth-footer">
+                    <p>New to MediBharat? <a href="register.html">Create Account</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+</body>
+</html>

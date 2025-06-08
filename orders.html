@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - MediBharat</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="container">
+                <div class="profile-header">
+                    <a href="dashboard.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="welcome-text">
+                        <h2>My Orders</h2>
+                        <p>Track and manage your orders</p>
+                    </div>
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Order Tabs -->
+                <div class="order-tabs">
+                    <button class="tab-btn active">All Orders</button>
+                    <button class="tab-btn">In Progress</button>
+                    <button class="tab-btn">Delivered</button>
+                    <button class="tab-btn">Cancelled</button>
+                </div>
+
+                <!-- Order List -->
+                <div class="orders-list">
+                    <!-- Order Card 1 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-meta">
+                                <span class="order-id">Order #MB12345</span>
+                                <span class="order-date">Placed on 12 Jun 2023</span>
+                            </div>
+                            <div class="order-status processing">In Transit</div>
+                        </div>
+                        
+                        <div class="order-items">
+                            <div class="order-item">
+                                <img src="https://img.pristyncare.com/static_pages/meftal-page/Dolo2.webp" alt="Medicine" class="item-image">
+                                <div class="item-details">
+                                    <h4>Dolo 650mg Tablet</h4>
+                                    <p>Strip of 15 tablets</p>
+                                    <div class="item-meta">
+                                        <span class="price">₹25.00</span>
+                                        <span class="qty">Qty: 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-item">
+                                <img src="https://assets.truemeds.in/Images/ProductImage/TM-TACR1-044993/zincovit-tablet-15_zincovit-tablet-15--TM-TACR1-044993_1.png" alt="Medicine" class="item-image">
+                                <div class="item-details">
+                                    <h4>Zincovit Tablet</h4>
+                                    <p>Bottle of 60 tablets</p>
+                                    <div class="item-meta">
+                                        <span class="price">₹120.00</span>
+                                        <span class="qty">Qty: 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span>Item Total</span>
+                                <span>₹170.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Fee</span>
+                                <span>₹49.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total Amount</span>
+                                <span>₹219.00</span>
+                            </div>
+                        </div>
+
+                        <div class="order-actions">
+                            <button class="btn btn-outline"><i class="fas fa-truck"></i> Track Order</button>
+                            <button class="btn btn-text"><i class="fas fa-redo"></i> Reorder</button>
+                        </div>
+                    </div>
+
+                    <!-- Order Card 2 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-meta">
+                                <span class="order-id">Order #MB12344</span>
+                                <span class="order-date">Delivered on 5 Jun 2023</span>
+                            </div>
+                            <div class="order-status delivered">Delivered</div>
+                        </div>
+                        
+                        <div class="order-items">
+                            <div class="order-item">
+                                <img src="https://www.bbassets.com/media/uploads/p/l/40323622_1-limcee-vitamin-c-chewable-tablet-500-mg-orange-flavour.jpg" alt="Medicine" class="item-image">
+                                <div class="item-details">
+                                    <h4>Vitamin C Chewable</h4>
+                                    <p>Bottle of 30 tablets</p>
+                                    <div class="item-meta">
+                                        <span class="price">₹199.00</span>
+                                        <span class="qty">Qty: 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span>Item Total</span>
+                                <span>₹199.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Fee</span>
+                                <span>FREE</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total Amount</span>
+                                <span>₹199.00</span>
+                            </div>
+                        </div>
+
+                        <div class="order-actions">
+                            <button class="btn btn-outline"><i class="fas fa-box"></i> View Details</button>
+                            <button class="btn btn-text"><i class="fas fa-redo"></i> Reorder</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="orders.html" class="nav-item active">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="prescriptions.html" class="nav-item">
+                <i class="fas fa-prescription"></i>
+                <span>Prescriptions</span>
+            </a>
+            <a href="account.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Account</span>
+            </a>
+        </nav>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
