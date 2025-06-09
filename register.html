@@ -1,212 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sign Up - MediBharat</title>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="./js/firebase-config.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="css/styles.css" />
     <style>
-        .auth-container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
-        .divider {
-            margin: 1.5rem 0;
-            text-align: center;
-            position: relative;
-        }
-
-        .divider::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #ddd;
-            z-index: 1;
-        }
-
-        .divider span {
-            background: white;
-            padding: 0 1rem;
-            position: relative;
-            z-index: 2;
-            color: #666;
-        }
-
-        .btn-google {
-            background: #fff;
-            color: #333;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        .btn-google:hover {
-            background: #f9f9f9;
-        }
-
-        .login-link {
-            margin-top: 1.5rem;
-            color: #666;
-        }
-
-        .login-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            margin: 1rem 0;
-            display: none;
-        }
+      /* your CSS here */
     </style>
-</head>
-
-<body>
+  </head>
+  <body>
     <div class="auth-container">
-        <h2>Create an Account</h2>
-        <p>Join MediBharat to get started</p>
+      <h2>Create an Account</h2>
+      <p>Join MediBharat to get started</p>
 
-        <div class="error-message" id="errorMessage"></div>
+      <div
+        class="error-message"
+        id="errorMessage"
+        style="display: none; color: red; margin-bottom: 1rem"
+      ></div>
 
-        <button class="btn-google" id="googleSignUp">
-            <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
-            Sign up with Google
+      <button class="btn-google" id="googleSignUp">
+        <img src="https://www.google.com/favicon.ico" alt="Google" width="20" />
+        Sign up with Google
+      </button>
+
+      <div class="divider"><span>OR</span></div>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Create a password (min 6 characters)"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%">
+          Create Account
         </button>
+      </form>
 
-        <div class="divider">
-            <span>OR</span>
-        </div>
-
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Create a password (min 6 characters)" minlength="6"
-                    required>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">
-                Create Account
-            </button>
-        </form>
-
-        <div class="login-link">
-            Already have an account? <a href="login.html">Log in</a>
-        </div>
+      <div class="login-link" style="margin-top: 1rem">
+        Already have an account? <a href="login.html">Log in</a>
+      </div>
     </div>
 
     <script>
-        // Initialize Firebase
-        const auth = firebase.auth();
+      // Google Sign Up
+      document.getElementById("googleSignUp").addEventListener("click", () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth
+          .signInWithPopup(provider)
+          .then(() => auth.currentUser.getIdToken())
+          .then((idToken) => {
+            return fetch("http://localhost:5000/api/sync-user", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + idToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name: auth.currentUser.displayName || "",
+                email: auth.currentUser.email,
+              }),
+            });
+          })
+          .then(() => {
+            window.location.href = "dashboard.html";
+          })
+          .catch((error) => {
+            showError(error.message);
+          });
+      });
 
-        // Google Sign Up
-        document.getElementById('googleSignUp').addEventListener('click', () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // User signed in
-                    window.location.href = 'dashboard.html';
-                })
-                .catch((error) => {
-                    showError(error.message);
-                });
+      // Email/Password Sign Up
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+
+          if (!name) {
+            showError("Please enter your full name.");
+            return;
+          }
+
+          auth
+            .createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+              // Set display name on user profile
+              return userCredential.user.updateProfile({ displayName: name });
+            })
+            .then(() => auth.currentUser.getIdToken())
+            .then((idToken) => {
+              return fetch("http://localhost:5000/api/sync-user", {
+                method: "POST",
+                headers: {
+                  Authorization: "Bearer " + idToken,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: auth.currentUser.displayName || "",
+                  email: auth.currentUser.email,
+                }),
+              });
+            })
+            .then(() => {
+              window.location.href = "dashboard.html";
+            })
+            .catch((error) => {
+              showError(error.message);
+            });
         });
 
-        // Email/Password Sign Up
-        document.getElementById('registerForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Update user profile
-                    return userCredential.user.updateProfile({
-                        displayName: name
-                    });
-                })
-                .then(() => {
-                    // Redirect to dashboard
-                    window.location.href = 'dashboard.html';
-                })
-                .catch((error) => {
-                    showError(error.message);
-                });
-        });
-
-        // Helper functions
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-
-            // Hide error after 5 seconds
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
+      // Show error helper
+      function showError(message) {
+        const errorDiv = document.getElementById("errorMessage");
+        errorDiv.textContent = message;
+        errorDiv.style.display = "block";
+        setTimeout(() => {
+          errorDiv.style.display = "none";
+        }, 5000);
+      }
     </script>
-</body>
-
+  </body>
 </html>
