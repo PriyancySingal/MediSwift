@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBot - Healthcare Assistant</title>
+    <link rel="stylesheet" href="chatbot_style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bot-avatar">🏥</div>
+            <div class="bot-name">MediBot</div>
+            <div class="bot-status">
+                <span class="status-indicator"></span>
+                Online & Ready to Help
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                Welcome! I'm MediBot, your healthcare assistant. How can I help you today?
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <span>MediBot is typing</span>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="menu-buttons" id="menuButtonsContainer"></div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    class="message-input" 
+                    id="messageInput" 
+                    placeholder="Type your symptoms..."
+                    maxlength="500"
+                >
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ⚠️ This is for informational purposes only. Always consult healthcare professionals for medical advice.
+        </div>
+    </div>
+
+    <script src="chatbot_script.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Ignore Firebase Admin SDK and environment files
+firebase-adminsdk.json
+.env
+
+# MongoDB
+/data/db/
+*.log
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# OS files
+.DS_Store
+
+# VSCode settings
+.vscode/
+
+# Node.js files
+node_modules/
+npm-debug.log
+
+# Log files
+*.log

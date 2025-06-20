@@ -427,6 +427,32 @@
       }
     });
   </script>
+
+  <!-- Chat Icon -->
+  <div class="chat-icon" id="chatIcon">
+    <i class="fas fa-comment-medical"></i>
+  </div>
+
+  <!-- Chat Container (initially hidden) -->
+  <div class="chat-container" id="chatContainer" style="display: none;">
+    <iframe src="chatbot_index.html" class="chat-iframe" id="chatIframe"></iframe>
+  </div>
+
+  <script>
+    // Toggle chat container
+    document.getElementById('chatIcon').addEventListener('click', function () {
+      const chatContainer = document.getElementById('chatContainer');
+      const iframe = document.getElementById('chatIframe');
+
+      if (chatContainer.style.display === 'none') {
+        chatContainer.style.display = 'block';
+        // Reset iframe source to ensure it reloads when opened
+        iframe.src = iframe.src;
+      } else {
+        chatContainer.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 
 </html>
