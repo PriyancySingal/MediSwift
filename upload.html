@@ -462,24 +462,35 @@
                     createdAt: new Date().toISOString()
                 };
 
-                // Save to localStorage
-                const prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
-                prescriptions.unshift(prescription);
-                localStorage.setItem('prescriptions', JSON.stringify(prescriptions));
+                // Send prescription data to your backend
+                fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(prescription)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                       throw new Error('Failed to upload prescription');
+                    }
+                    return response.json();
+                 })
+                .then(data => {
+                     showToast('Prescription uploaded successfully!', 'success');
+                      files = [];
+                      document.getElementById('uploadForm').reset();
+                      updatePreview();
+                      updateUploadButton();
+                      setTimeout(() => {
+                        window.location.href = 'prescriptions.html';
+                       }, 1500);
+                })
+                .catch(error => {
+                     console.error('Upload error:', error);
+                     showToast('Failed to upload prescription', 'error');
+                });
 
-                // Show success message
-                showToast('Prescription uploaded successfully!', 'success');
-
-                // Reset form
-                files = [];
-                document.getElementById('uploadForm').reset();
-                updatePreview();
-                updateUploadButton();
-
-                // Redirect to prescriptions page after a delay
-                setTimeout(() => {
-                    window.location.href = 'prescriptions.html';
-                }, 1500);
             }
 
 
