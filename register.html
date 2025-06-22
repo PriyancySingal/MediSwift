@@ -83,7 +83,7 @@
           .signInWithPopup(provider)
           .then(() => auth.currentUser.getIdToken())
           .then((idToken) => {
-            return fetch("https://medibharat-backend.onrender.com", {
+            return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
               method: "POST",
               headers: {
                 Authorization: "Bearer " + idToken,
@@ -126,7 +126,7 @@
             })
             .then(() => auth.currentUser.getIdToken())
             .then((idToken) => {
-              return fetch("https://medibharat-backend.onrender.com", {
+              return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
                 method: "POST",
                 headers: {
                   Authorization: "Bearer " + idToken,
