@@ -96,6 +96,20 @@
             });
           })
           .then(() => {
+      // 2. Log event to auth_events
+              return fetch("https://medibharat-backend.onrender.com/track-auth", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: auth.currentUser.displayName || "",
+                  email: auth.currentUser.email,
+                  event: "signup",
+                }),
+              });
+            })
+          .then(() => {
             window.location.href = "dashboard.html";
           })
           .catch((error) => {
@@ -135,6 +149,20 @@
                 body: JSON.stringify({
                   name: auth.currentUser.displayName || "",
                   email: auth.currentUser.email,
+                }),
+              });
+            })
+            .then(() => {
+      // 2. Log event to auth_events
+              return fetch("https://medibharat-backend.onrender.com/track-auth", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: auth.currentUser.displayName || "",
+                  email: auth.currentUser.email,
+                  event: "signup",
                 }),
               });
             })
