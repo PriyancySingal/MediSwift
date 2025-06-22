@@ -2,20 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Prescription - MediBharat</title>
-
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary: #3f72af;
@@ -286,23 +276,19 @@
             <form id="uploadForm">
                 <div class="form-group">
                     <label for="doctorName" class="required">Doctor's Name</label>
-                    <input type="text" id="doctorName" class="form-control" placeholder="Dr. Sharma" required />
+                    <input type="text" id="doctorName" class="form-control" placeholder="Dr. Sharma" required>
                 </div>
 
                 <div class="form-group">
                     <label for="deliveryDate" class="required">When do you need it by?</label>
-                    <input type="date" id="deliveryDate" class="form-control" required />
+                    <input type="date" id="deliveryDate" class="form-control" required>
                     <div class="upload-hint">We'll deliver your medicines by this date</div>
                 </div>
 
                 <div class="form-group">
                     <label for="notes">Additional Notes (Optional)</label>
-                    <textarea
-                      id="notes"
-                      class="form-control"
-                      rows="3"
-                      placeholder="Any special instructions for delivery or medication"
-                    ></textarea>
+                    <textarea id="notes" class="form-control" rows="3"
+                        placeholder="Any special instructions for delivery or medication"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -313,13 +299,7 @@
                         </div>
                         <div class="upload-text">Click to upload or drag & drop</div>
                         <div class="upload-hint">JPG, PNG or PDF (max. 5MB)</div>
-                        <input
-                          type="file"
-                          id="prescriptionFiles"
-                          multiple
-                          accept="image/*,.pdf"
-                          style="display: none"
-                        />
+                        <input type="file" id="prescriptionFiles" multiple accept="image/*,.pdf" style="display: none;">
                     </div>
                     <div class="preview-container" id="previewContainer">
                         <!-- Preview items will be added here -->
@@ -334,59 +314,27 @@
     </div>
 
     <script>
-        // Your Firebase config here — REPLACE with your actual config:
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID",
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        document.addEventListener("DOMContentLoaded", function () {
-            // Set min date to tomorrow
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set min date to today
             const today = new Date();
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
-            const minDate = tomorrow.toISOString().split("T")[0];
-            document.getElementById("deliveryDate").min = minDate;
-            document.getElementById("deliveryDate").value = minDate; // default
+            const minDate = tomorrow.toISOString().split('T')[0];
+            document.getElementById('deliveryDate').min = minDate;
+            document.getElementById('deliveryDate').value = minDate; // Set default to tomorrow
 
-            const dropArea = document.getElementById("dropArea");
-            const fileInput = document.getElementById("prescriptionFiles");
-            const previewContainer = document.getElementById("previewContainer");
-            const uploadBtn = document.getElementById("uploadBtn");
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('prescriptionFiles');
+            const previewContainer = document.getElementById('previewContainer');
+            const uploadBtn = document.getElementById('uploadBtn');
             let files = [];
-            let firebaseIdToken = null; // will store user token
-
-            // Firebase auth state listener
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    user
-                        .getIdToken()
-                        .then((token) => {
-                            firebaseIdToken = token;
-                            updateUploadButton();
-                        })
-                        .catch(() => {
-                            showToast("Failed to get auth token", "error");
-                        });
-                } else {
-                    alert("You must be logged in to upload prescriptions.");
-                    window.location.href = "login.html"; // redirect to login page
-                }
-            });
 
             // Handle file selection
-            dropArea.addEventListener("click", () => fileInput.click());
-            fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+            dropArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-            // Drag and drop event handlers
-            ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 dropArea.addEventListener(eventName, preventDefaults, false);
             });
 
@@ -395,39 +343,40 @@
                 e.stopPropagation();
             }
 
-            ["dragenter", "dragover"].forEach((eventName) => {
+            ['dragenter', 'dragover'].forEach(eventName => {
                 dropArea.addEventListener(eventName, highlight, false);
             });
 
-            ["dragleave", "drop"].forEach((eventName) => {
+            ['dragleave', 'drop'].forEach(eventName => {
                 dropArea.addEventListener(eventName, unhighlight, false);
             });
 
             function highlight() {
-                dropArea.classList.add("dragover");
+                dropArea.classList.add('dragover');
             }
 
             function unhighlight() {
-                dropArea.classList.remove("dragover");
+                dropArea.classList.remove('dragover');
             }
 
-            dropArea.addEventListener("drop", function (e) {
+
+            dropArea.addEventListener('drop', function (e) {
                 const dt = e.dataTransfer;
                 const fileList = dt.files;
                 handleFiles(fileList);
             });
 
-            // Upload button click
-            uploadBtn.addEventListener("click", handleUpload);
+            // Handle file upload
+            uploadBtn.addEventListener('click', handleUpload);
 
             function handleFiles(selectedFiles) {
                 for (let i = 0; i < selectedFiles.length; i++) {
                     const file = selectedFiles[i];
-                    if (file.size > 5 * 1024 * 1024) {
-                        showToast("File size should be less than 5MB", "error");
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        showToast('File size should be less than 5MB', 'error');
                         continue;
                     }
-                    if (file.type.startsWith("image/") || file.type === "application/pdf") {
+                    if (file.type.startsWith('image/') || file.type === 'application/pdf') {
                         files.push(file);
                     }
                 }
@@ -436,18 +385,16 @@
             }
 
             function updatePreview() {
-                previewContainer.innerHTML = "";
+                previewContainer.innerHTML = '';
                 if (files.length === 0) {
                     return;
                 }
 
                 files.forEach((file, index) => {
-                    const previewItem = document.createElement("div");
-                    previewItem.className = "preview-item";
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
 
-                    const fileTypeIcon = file.type.startsWith("image/")
-                        ? "fa-file-image"
-                        : "fa-file-pdf";
+                    const fileTypeIcon = file.type.startsWith('image/') ? 'fa-file-image' : 'fa-file-pdf';
 
                     previewItem.innerHTML = `
                         <i class="fas ${fileTypeIcon} file-icon"></i>
@@ -462,7 +409,8 @@
 
                     previewContainer.appendChild(previewItem);
 
-                    previewItem.querySelector(".remove-btn").addEventListener("click", function (e) {
+                    // Add event listener for remove button
+                    previewItem.querySelector('.remove-btn').addEventListener('click', function (e) {
                         e.stopPropagation();
                         files.splice(index, 1);
                         updatePreview();
@@ -472,89 +420,89 @@
             }
 
             function formatFileSize(bytes) {
-                if (bytes === 0) return "0 Bytes";
+                if (bytes === 0) return '0 Bytes';
                 const k = 1024;
-                const sizes = ["Bytes", "KB", "MB", "GB"];
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
 
             function updateUploadButton() {
-                const doctorName = document.getElementById("doctorName").value.trim();
-                const deliveryDate = document.getElementById("deliveryDate").value;
+                const doctorName = document.getElementById('doctorName').value.trim();
+                const deliveryDate = document.getElementById('deliveryDate').value;
 
-                // Enable upload only if user authenticated and form valid
-                uploadBtn.disabled = !(
-                    files.length > 0 &&
-                    doctorName &&
-                    deliveryDate &&
-                    firebaseIdToken
-                );
+                uploadBtn.disabled = !(files.length > 0 && doctorName && deliveryDate);
             }
 
             function handleUpload() {
-                const doctorName = document.getElementById("doctorName").value.trim();
-                const deliveryDate = document.getElementById("deliveryDate").value;
-                const notes = document.getElementById("notes").value.trim();
+                const doctorName = document.getElementById('doctorName').value.trim();
+                const deliveryDate = document.getElementById('deliveryDate').value;
+                const notes = document.getElementById('notes').value.trim();
 
                 if (files.length === 0) {
-                    showToast("Please select at least one file", "error");
-                    return;
-                }
-
-                if (!firebaseIdToken) {
-                    showToast("Authentication token missing, please reload.", "error");
+                    showToast('Please select at least one file', 'error');
                     return;
                 }
 
                 const formData = new FormData();
-                formData.append("doctor_name", doctorName);
-                formData.append("delivery_date", deliveryDate);
-                formData.append("notes", notes);
+                formData.append('doctor_name', doctorName);
+                formData.append('delivery_date', deliveryDate);
+                formData.append('notes', notes);
 
-                files.forEach((file) => {
-                    formData.append("files", file);
+                // Append files one by one
+                files.forEach(file => {
+                    formData.append('files', file); // 'files' matches your backend param name
                 });
 
-                fetch("https://medibharat-backend.onrender.com/api/prescriptions", {
-                    method: "POST",
-                    headers: {
-                        Authorization: "Bearer " + firebaseIdToken,
-                    },
-                    body: formData,
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Failed to upload prescription");
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        showToast("Prescription uploaded successfully!", "success");
-                        files = [];
-                        document.getElementById("uploadForm").reset();
-                        updatePreview();
-                        updateUploadButton();
-                        setTimeout(() => {
-                            window.location.href = "prescriptions.html";
-                        }, 1500);
-                    })
-                    .catch((error) => {
-                        console.error("Upload error:", error);
-                        showToast("Failed to upload prescription", "error");
-                    });
-            }
+                // Get Firebase token from wherever you store it, example localStorage
+                const token = localStorage.getItem('firebaseToken'); 
+                if (!token) {
+                    showToast('Authentication token missing', 'error');
+                    return;
+                }
 
-            function showToast(message, type = "success") {
-                const toast = document.createElement("div");
+                fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        // Don't set Content-Type manually with FormData — browser handles it
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to upload prescription');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showToast('Prescription uploaded successfully!', 'success');
+                    files = [];
+                    document.getElementById('uploadForm').reset();
+                    updatePreview();
+                    updateUploadButton();
+                    setTimeout(() => {
+                        window.location.href = 'prescriptions.html';
+                    }, 1500);
+                })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showToast('Failed to upload prescription', 'error');
+            });
+        }
+
+
+
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 toast.textContent = message;
                 document.body.appendChild(toast);
 
                 setTimeout(() => {
-                    toast.classList.add("show");
+                    toast.classList.add('show');
                     setTimeout(() => {
-                        toast.classList.remove("show");
+                        toast.classList.remove('show');
                         setTimeout(() => {
                             document.body.removeChild(toast);
                         }, 300);
@@ -562,11 +510,11 @@
                 }, 100);
             }
 
-            // Form validation event listeners
-            const formInputs = document.querySelectorAll("input, textarea");
-            formInputs.forEach((input) => {
-                input.addEventListener("change", updateUploadButton);
-                input.addEventListener("input", updateUploadButton);
+            // Form validation
+            const formInputs = document.querySelectorAll('input, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('change', updateUploadButton);
+                input.addEventListener('input', updateUploadButton);
             });
         });
     </script>
