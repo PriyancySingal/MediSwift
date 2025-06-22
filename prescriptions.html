@@ -10,282 +10,97 @@
   <script src="./js/firebase-config.js"></script>
   <style>
     :root {
-        --primary: #3f72af;
-        --secondary: #112d4e;
-        --accent: #ff6b6b;
-        --light: #f9f7f7;
-        --dark: #112d4e;
-        --gray: #dbe2ef;
-        --success: #4caf50;
-        --warning: #ff9800;
-        --danger: #f44336;
-        --text: #2d3436;
-        --text-light: #636e72;
-        --border: #e0e0e0;
+      --primary: #3f72af;
+      --secondary: #112d4e;
+      --accent: #ff6b6b;
+      --light: #f9f7f7;
+      --dark: #112d4e;
+      --gray: #dbe2ef;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --border: #e0e0e0;
     }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f7fa;
-        color: var(--text);
-        line-height: 1.6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      color: var(--text);
+      line-height: 1.6;
     }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 15px;
-    }
-
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
     header {
-        background: white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 15px 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+      background: white; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 15px 0; position: sticky; top: 0; z-index: 100;
     }
-
     .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    .logo {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary);
-        text-decoration: none;
-    }
-
-    .cart-icon {
-        position: relative;
-        font-size: 1.5rem;
-        color: var(--primary);
-    }
-
+    .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .cart-icon { position: relative; font-size: 1.5rem; color: var(--primary); }
     #cartCount {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        background: var(--accent);
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        font-weight: bold;
+      position: absolute; top: -8px; right: -8px; background: var(--accent);
+      color: white; border-radius: 50%; width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: bold;
     }
-
-    .page-title {
-        text-align: center;
-        margin: 30px 0;
-        color: var(--secondary);
-    }
-
+    .page-title { text-align: center; margin: 30px 0; color: var(--secondary); }
     .upload-card {
-        background: white;
-        border-radius: 10px;
-        padding: 30px;
-        text-align: center;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border: 2px dashed var(--gray);
-        transition: all 0.3s;
-        cursor: pointer;
+      background: white; border-radius: 10px; padding: 30px; text-align: center;
+      margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: 2px dashed var(--gray); transition: all 0.3s; cursor: pointer;
     }
-
-    .upload-card:hover {
-        border-color: var(--primary);
-        transform: translateY(-3px);
-    }
-
-    .upload-icon {
-        font-size: 3rem;
-        color: var(--primary);
-        margin-bottom: 15px;
-    }
-
+    .upload-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+    .upload-icon { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
     .btn {
-        display: inline-block;
-        padding: 12px 25px;
-        background: var(--primary);
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: background 0.3s;
-        border: none;
-        cursor: pointer;
+      display: inline-block; padding: 12px 25px; background: var(--primary);
+      color: white; text-decoration: none; border-radius: 5px; font-weight: 500;
+      transition: background 0.3s; border: none; cursor: pointer;
     }
-
-    .btn:hover {
-        background: var(--secondary);
-    }
-
-    .prescriptions-list {
-        margin-top: 30px;
-    }
-
+    .btn:hover { background: var(--secondary); }
+    .prescriptions-list { margin-top: 30px; }
     .prescription-card {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
-
     .prescription-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border);
     }
-
-    .prescription-title {
-        font-size: 1.2rem;
-        color: var(--secondary);
-        margin-bottom: 5px;
-    }
-
-    .prescription-date {
-        font-size: 0.9rem;
-        color: var(--text-light);
-    }
-
+    .prescription-title { font-size: 1.2rem; color: var(--secondary); margin-bottom: 5px; }
+    .prescription-date { font-size: 0.9rem; color: var(--text-light); }
     .prescription-status {
-        padding: 5px 12px;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 500;
+      padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 500;
     }
-
-    .status-pending {
-        background: #fff3e0;
-        color: #f57c00;
-    }
-
-    .status-processing {
-        background: #e3f2fd;
-        color: #1976d2;
-    }
-
-    .status-completed {
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-
-    .status-cancelled {
-        background: #ffebee;
-        color: #c62828;
-    }
-
+    .status-pending { background: #fff3e0; color: #f57c00; }
+    .status-processing { background: #e3f2fd; color: #1976d2; }
+    .status-completed { background: #e8f5e9; color: #2e7d32; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
     .prescription-details {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 15px;
+      display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px;
     }
-
     .detail-item {
-        display: flex;
-        align-items: center;
-        color: var(--text);
-        font-size: 0.95rem;
+      display: flex; align-items: center; color: var(--text); font-size: 0.95rem;
     }
-
-    .detail-item i {
-        margin-right: 8px;
-        color: var(--primary);
-        width: 20px;
-        text-align: center;
-    }
-
+    .detail-item i { margin-right: 8px; color: var(--primary); width: 20px; text-align: center; }
     .prescription-files {
-        margin: 15px 0;
-        padding: 15px;
-        background: #f9f9f9;
-        border-radius: 8px;
+      margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;
     }
-
     .file-item {
-        display: flex;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 8px 0; border-bottom: 1px solid #eee; gap: 6px;
     }
-
-    .file-item:last-child {
-        border-bottom: none;
-    }
-
-    .file-icon {
-        margin-right: 10px;
-        color: var(--primary);
-    }
-
-    .file-name {
-        flex: 1;
-        font-size: 0.9rem;
-    }
-
-    .file-size {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        margin-left: 10px;
-    }
-
-    .prescription-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid var(--border);
-    }
-
-    .btn-text {
-        background: transparent;
-        color: var(--primary);
-        padding: 10px 15px;
-    }
-
-    .btn-text:hover {
-        background: rgba(63, 114, 175, 0.1);
-    }
-
-    .btn-outline {
-        background: transparent;
-        border: 1px solid var(--primary);
-        color: var(--primary);
-    }
-
-    .btn-outline:hover {
-        background: rgba(63, 114, 175, 0.1);
-    }
-
+    .file-item:last-child { border-bottom: none; }
+    .file-icon { margin-right: 10px; color: var(--primary); }
+    .file-name { flex: 1; font-size: 0.9rem; }
+    .file-size { font-size: 0.8rem; color: var(--text-light); margin-left: 10px; }
     .no-prescriptions {
-        text-align: center;
-        padding: 50px 20px;
-        color: var(--text-light);
+      text-align: center; padding: 50px 20px; color: var(--text-light);
     }
-
     .no-prescriptions i {
-        font-size: 3rem;
-        color: #e0e0e0;
-        margin-bottom: 15px;
-        display: block;
+      font-size: 3rem; color: #e0e0e0; margin-bottom: 15px; display: block;
     }
   </style>
 </head>
@@ -304,18 +119,12 @@
 
   <div class="container">
     <h1 class="page-title">My Prescriptions</h1>
-
     <div class="upload-card" onclick="window.location.href='upload.html'">
-      <div class="upload-icon">
-        <i class="fas fa-cloud-upload-alt"></i>
-      </div>
+      <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
       <h3>Upload New Prescription</h3>
       <p>Take a clear photo or upload a file</p>
-      <button class="btn">
-        <i class="fas fa-plus"></i> Upload Prescription
-      </button>
+      <button class="btn"><i class="fas fa-plus"></i> Upload Prescription</button>
     </div>
-
     <div class="prescriptions-list" id="prescriptionsList"></div>
   </div>
 
@@ -344,8 +153,8 @@
       }
 
       container.innerHTML = data.map(prescription => {
-        const createdAt = new Date(prescription.createdAt).toLocaleDateString('en-IN');
-        const deliveryDate = new Date(prescription.deliveryDate).toLocaleDateString('en-IN');
+        const createdAt = new Date(prescription.created_at).toLocaleDateString('en-IN');
+        const deliveryDate = new Date(prescription.delivery_date).toLocaleDateString('en-IN');
         const statusClass = {
           pending: 'status-pending',
           processing: 'status-processing',
@@ -353,19 +162,29 @@
           cancelled: 'status-cancelled'
         }[prescription.status] || 'status-pending';
 
-        const filesHTML = (prescription.files || []).map(file => `
-          <div class="file-item">
-            <i class="fas ${file.type === 'application/pdf' ? 'fa-file-pdf' : 'fa-file-image'} file-icon"></i>
-            <span class="file-name">${file.name}</span>
-            <span class="file-size">${formatFileSize(file.size)}</span>
-          </div>
-        `).join('');
+        const filesHTML = (prescription.files || []).map(file => {
+          const base64Url = `data:${file.type};base64,${file.base64}`;
+          const isPdf = file.type === 'application/pdf';
+          return `
+            <div class="file-item">
+              <div style="display:flex; align-items:center; width: 100%;">
+                <i class="fas ${isPdf ? 'fa-file-pdf' : 'fa-file-image'} file-icon"></i>
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${formatFileSize(file.size)}</span>
+              </div>
+              ${isPdf
+                ? `<iframe src="${base64Url}" width="100%" height="300px" style="border:1px solid #ccc; border-radius:8px;"></iframe>`
+                : `<img src="${base64Url}" style="max-width:100%; border-radius:8px; border:1px solid #ccc;" alt="Prescription Image">`
+              }
+            </div>
+          `;
+        }).join('');
 
         return `
           <div class="prescription-card">
             <div class="prescription-header">
               <div>
-                <h3 class="prescription-title">Prescription #${prescription.id}</h3>
+                <h3 class="prescription-title">Prescription</h3>
                 <span class="prescription-date">Uploaded on ${createdAt}</span>
               </div>
               <span class="prescription-status ${statusClass}">
@@ -375,7 +194,7 @@
             <div class="prescription-details">
               <div class="detail-item">
                 <i class="fas fa-user-md"></i>
-                <span>${prescription.doctorName || 'Not specified'}</span>
+                <span>${prescription.doctor_name || 'Not specified'}</span>
               </div>
               <div class="detail-item">
                 <i class="fas fa-calendar-check"></i>
@@ -400,7 +219,7 @@
             headers: { Authorization: 'Bearer ' + idToken }
           })
           .then(res => res.json())
-          .then(renderPrescriptions)
+          .then(data => renderPrescriptions(data.prescriptions || []))
           .catch(err => console.error('Error loading prescriptions:', err));
         });
       }
