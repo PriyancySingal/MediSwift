@@ -444,54 +444,53 @@
                     return;
                 }
 
+                const formData = new FormData();
+                formData.append('doctor_name', doctorName);
+                formData.append('delivery_date', deliveryDate);
+                formData.append('notes', notes);
 
-                // Create prescription object
-                const prescription = {
-                    id: 'RX' + Date.now(),
-                    doctorName: doctorName,
-                    date: new Date().toISOString(),
-                    deliveryDate: deliveryDate,
-                    notes: notes,
-                    files: Array.from(files).map(file => ({
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        lastModified: file.lastModified
-                    })),
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                };
+                // Append files one by one
+                files.forEach(file => {
+                    formData.append('files', file); // 'files' matches your backend param name
+                });
 
-                // Send prescription data to your backend
+                // Get Firebase token from wherever you store it, example localStorage
+                const token = localStorage.getItem('firebaseToken'); 
+                if (!token) {
+                    showToast('Authentication token missing', 'error');
+                    return;
+                }
+
                 fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Authorization': 'Bearer ' + token,
+                        // Don't set Content-Type manually with FormData — browser handles it
                     },
-                    body: JSON.stringify(prescription)
+                    body: formData
                 })
                 .then(response => {
                     if (!response.ok) {
-                       throw new Error('Failed to upload prescription');
+                        throw new Error('Failed to upload prescription');
                     }
                     return response.json();
-                 })
-                .then(data => {
-                     showToast('Prescription uploaded successfully!', 'success');
-                      files = [];
-                      document.getElementById('uploadForm').reset();
-                      updatePreview();
-                      updateUploadButton();
-                      setTimeout(() => {
-                        window.location.href = 'prescriptions.html';
-                       }, 1500);
                 })
-                .catch(error => {
-                     console.error('Upload error:', error);
-                     showToast('Failed to upload prescription', 'error');
-                });
+                .then(data => {
+                    showToast('Prescription uploaded successfully!', 'success');
+                    files = [];
+                    document.getElementById('uploadForm').reset();
+                    updatePreview();
+                    updateUploadButton();
+                    setTimeout(() => {
+                        window.location.href = 'prescriptions.html';
+                    }, 1500);
+                })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showToast('Failed to upload prescription', 'error');
+            });
+        }
 
-            }
 
 
             function showToast(message, type = 'success') {
