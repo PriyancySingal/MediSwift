@@ -79,6 +79,7 @@
           user
             .getIdToken()
             .then((idToken) => {
+              localStorage.setItem('firebaseToken', idToken);  // <-- Added this
               return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
                 method: "POST",
                 headers: {
@@ -107,6 +108,7 @@
           .signInWithPopup(provider)
           .then(() => auth.currentUser.getIdToken())
           .then((idToken) => {
+            localStorage.setItem('firebaseToken', idToken);  // <-- Added this
             return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
               method: "POST",
               headers: {
@@ -151,6 +153,7 @@
           .signInWithEmailAndPassword(email, password)
           .then(() => auth.currentUser.getIdToken())
           .then((idToken) => {
+            localStorage.setItem('firebaseToken', idToken);  // <-- Added this
             return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
               method: "POST",
               headers: {
