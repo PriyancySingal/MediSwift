@@ -83,7 +83,7 @@
           .signInWithPopup(provider)
           .then(() => auth.currentUser.getIdToken())
           .then((idToken) => {
-            return fetch("http://localhost:5000/api/sync-user", {
+            return fetch("https://medibharat-backend.onrender.com", {
               method: "POST",
               headers: {
                 Authorization: "Bearer " + idToken,
