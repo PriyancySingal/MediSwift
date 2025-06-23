@@ -2,522 +2,467 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Prescription - MediBharat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        :root {
-            --primary: #3f72af;
-            --secondary: #112d4e;
-            --accent: #ff6b6b;
-            --light: #f9f7f7;
-            --gray: #dbe2ef;
-            --text: #2d3436;
-            --text-light: #636e72;
-            --border: #e0e0e0;
-            --success: #4caf50;
-            --error: #f44336;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Prescription - MediBharat</title>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="./js/firebase-config.js"></script>
+  <style>
+    :root {
+      --primary: #3f72af;
+      --secondary: #112d4e;
+      --accent: #ff6b6b;
+      --light: #f9f7f7;
+      --gray: #dbe2ef;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --border: #e0e0e0;
+      --success: #4caf50;
+      --error: #f44336;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        body {
-            background-color: #f5f7fa;
-            color: var(--text);
-            line-height: 1.6;
-            padding-bottom: 60px;
-        }
+    body {
+      background-color: #f5f7fa;
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        header {
-            background: white;
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
+    header {
+      background: white;
+      padding: 15px 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
-        .back-btn {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .back-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .page-title {
-            text-align: center;
-            color: var(--secondary);
-            margin: 20px 0 30px;
-        }
+    .page-title {
+      text-align: center;
+      color: var(--secondary);
+      margin: 20px 0 30px;
+    }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text);
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text);
+    }
 
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
 
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(63, 114, 175, 0.2);
-        }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(63, 114, 175, 0.2);
+    }
 
-        .upload-area {
-            border: 2px dashed var(--gray);
-            border-radius: 10px;
-            padding: 30px 20px;
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-            background-color: #fafafa;
-        }
+    .upload-area {
+      border: 2px dashed var(--gray);
+      border-radius: 10px;
+      padding: 30px 20px;
+      text-align: center;
+      margin: 20px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: #fafafa;
+    }
 
-        .upload-area:hover,
-        .upload-area.dragover {
-            border-color: var(--primary);
-            background-color: #f5f9ff;
-        }
+    .upload-area:hover,
+    .upload-area.dragover {
+      border-color: var(--primary);
+      background-color: #f5f9ff;
+    }
 
-        .upload-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
+    .upload-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
 
-        .upload-text {
-            margin-bottom: 10px;
-            color: var(--text-light);
-        }
+    .upload-text {
+      margin-bottom: 10px;
+      color: var(--text-light);
+    }
 
-        .upload-hint {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
+    .upload-hint {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-top: 5px;
+    }
 
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s;
-            text-align: center;
-        }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s;
+      text-align: center;
+    }
 
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
 
-        .btn i {
-            margin-right: 8px;
-        }
+    .btn i {
+      margin-right: 8px;
+    }
 
-        .preview-container {
-            margin-top: 20px;
-        }
+    .preview-container {
+      margin-top: 20px;
+    }
 
-        .preview-item {
-            display: flex;
-            align-items: center;
-            background: #f9f9f9;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
+    .preview-item {
+      display: flex;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
 
-        .file-icon {
-            margin-right: 12px;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
+    .file-icon {
+      margin-right: 12px;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
 
-        .file-info {
-            flex: 1;
-        }
+    .file-info {
+      flex: 1;
+    }
 
-        .file-name {
-            font-weight: 500;
-            margin-bottom: 3px;
-            word-break: break-all;
-        }
+    .file-name {
+      font-weight: 500;
+      margin-bottom: 3px;
+      word-break: break-all;
+    }
 
-        .file-size {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
+    .file-size {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
 
-        .remove-btn {
-            background: none;
-            border: none;
-            color: var(--error);
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 5px;
-            margin-left: 10px;
-        }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--error);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 5px;
+      margin-left: 10px;
+    }
 
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--text);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            max-width: 90%;
-            text-align: center;
-        }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      max-width: 90%;
+      text-align: center;
+    }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-        .toast.success {
-            background: var(--success);
-        }
+    .toast.success {
+      background: var(--success);
+    }
 
-        .toast.error {
-            background: var(--error);
-        }
+    .toast.error {
+      background: var(--error);
+    }
 
-        .required:after {
-            content: ' *';
-            color: var(--error);
-        }
+    .required:after {
+      content: ' *';
+      color: var(--error);
+    }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
 
-            .card {
-                padding: 20px 15px;
-            }
+      .card {
+        padding: 20px 15px;
+      }
 
-            .btn {
-                padding: 12px 20px;
-            }
-        }
-    </style>
+      .btn {
+        padding: 12px 20px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <div class="header-content">
-            <a href="prescriptions.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back
-            </a>
-            <h1 class="logo">MediBharat</h1>
-            <div style="width: 24px;"></div> <!-- For alignment -->
-        </div>
-    </header>
-
-    <div class="container">
-        <h2 class="page-title">Upload Prescription</h2>
-
-        <div class="card">
-            <form id="uploadForm">
-                <div class="form-group">
-                    <label for="doctorName" class="required">Doctor's Name</label>
-                    <input type="text" id="doctorName" class="form-control" placeholder="Dr. Sharma" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="deliveryDate" class="required">When do you need it by?</label>
-                    <input type="date" id="deliveryDate" class="form-control" required>
-                    <div class="upload-hint">We'll deliver your medicines by this date</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Additional Notes (Optional)</label>
-                    <textarea id="notes" class="form-control" rows="3"
-                        placeholder="Any special instructions for delivery or medication"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="required">Upload Prescription</label>
-                    <div class="upload-area" id="dropArea">
-                        <div class="upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="upload-text">Click to upload or drag & drop</div>
-                        <div class="upload-hint">JPG, PNG or PDF (max. 5MB)</div>
-                        <input type="file" id="prescriptionFiles" multiple accept="image/*,.pdf" style="display: none;">
-                    </div>
-                    <div class="preview-container" id="previewContainer">
-                        <!-- Preview items will be added here -->
-                    </div>
-                </div>
-
-                <button type="button" id="uploadBtn" class="btn" disabled>
-                    <i class="fas fa-upload"></i> Upload Prescription
-                </button>
-            </form>
-        </div>
+  <header>
+    <div class="header-content">
+      <a href="prescriptions.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+      <h1 class="logo">MediBharat</h1>
+      <div style="width: 24px;"></div>
     </div>
+  </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set min date to today
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const minDate = tomorrow.toISOString().split('T')[0];
-            document.getElementById('deliveryDate').min = minDate;
-            document.getElementById('deliveryDate').value = minDate; // Set default to tomorrow
+  <div class="container">
+    <h2 class="page-title">Upload Prescription</h2>
 
-            const dropArea = document.getElementById('dropArea');
-            const fileInput = document.getElementById('prescriptionFiles');
-            const previewContainer = document.getElementById('previewContainer');
-            const uploadBtn = document.getElementById('uploadBtn');
-            let files = [];
+    <div class="card">
+      <form id="uploadForm">
+        <div class="form-group">
+          <label for="doctorName" class="required">Doctor's Name</label>
+          <input type="text" id="doctorName" class="form-control" placeholder="Dr. Sharma" required />
+        </div>
 
-            // Handle file selection
-            dropArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        <div class="form-group">
+          <label for="deliveryDate" class="required">When do you need it by?</label>
+          <input type="date" id="deliveryDate" class="form-control" required />
+          <div class="upload-hint">We'll deliver your medicines by this date</div>
+        </div>
 
-            // Handle drag and drop
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
+        <div class="form-group">
+          <label for="notes">Additional Notes (Optional)</label>
+          <textarea id="notes" class="form-control" rows="3"
+            placeholder="Any special instructions for delivery or medication"></textarea>
+        </div>
 
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+        <div class="form-group">
+          <label class="required">Upload Prescription</label>
+          <div class="upload-area" id="dropArea">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Click to upload or drag & drop</div>
+            <div class="upload-hint">JPG, PNG or PDF (max. 5MB)</div>
+            <input type="file" id="prescriptionFiles" multiple accept="image/*,.pdf" style="display: none;" />
+          </div>
+          <div class="preview-container" id="previewContainer"></div>
+        </div>
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
+        <button type="button" id="uploadBtn" class="btn" disabled>
+          <i class="fas fa-upload"></i> Upload Prescription
+        </button>
+      </form>
+    </div>
+  </div>
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dropArea = document.getElementById('dropArea');
+      const fileInput = document.getElementById('prescriptionFiles');
+      const previewContainer = document.getElementById('previewContainer');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const doctorInput = document.getElementById('doctorName');
+      const deliveryDateInput = document.getElementById('deliveryDate');
+      let files = [];
 
-            function highlight() {
-                dropArea.classList.add('dragover');
-            }
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const minDate = tomorrow.toISOString().split('T')[0];
+      deliveryDateInput.min = minDate;
+      deliveryDateInput.value = minDate;
 
-            function unhighlight() {
-                dropArea.classList.remove('dragover');
-            }
+      dropArea.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName =>
+        dropArea.addEventListener(eventName, preventDefaults, false));
 
-            dropArea.addEventListener('drop', function (e) {
-                const dt = e.dataTransfer;
-                const fileList = dt.files;
-                handleFiles(fileList);
-            });
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
 
-            // Handle file upload
-            uploadBtn.addEventListener('click', handleUpload);
+      ['dragenter', 'dragover'].forEach(eventName =>
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false));
 
-            function handleFiles(selectedFiles) {
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                        showToast('File size should be less than 5MB', 'error');
-                        continue;
-                    }
-                    if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-                        files.push(file);
-                    }
-                }
-                updatePreview();
-                updateUploadButton();
-            }
+      ['dragleave', 'drop'].forEach(eventName =>
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false));
 
-            function updatePreview() {
-                previewContainer.innerHTML = '';
-                if (files.length === 0) {
-                    return;
-                }
+      dropArea.addEventListener('drop', function (e) {
+        const dt = e.dataTransfer;
+        const fileList = dt.files;
+        handleFiles(fileList);
+      });
 
-                files.forEach((file, index) => {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'preview-item';
+      uploadBtn.addEventListener('click', handleUpload);
 
-                    const fileTypeIcon = file.type.startsWith('image/') ? 'fa-file-image' : 'fa-file-pdf';
+      function handleFiles(selectedFiles) {
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          if (file.size > 5 * 1024 * 1024) {
+            showToast('File size should be less than 5MB', 'error');
+            continue;
+          }
+          if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+            files.push(file);
+          }
+        }
+        updatePreview();
+        updateUploadButton();
+      }
 
-                    previewItem.innerHTML = `
-                        <i class="fas ${fileTypeIcon} file-icon"></i>
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${formatFileSize(file.size)}</div>
-                        </div>
-                        <button class="remove-btn" data-index="${index}" type="button">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
+      function updatePreview() {
+        previewContainer.innerHTML = '';
+        files.forEach((file, index) => {
+          const previewItem = document.createElement('div');
+          previewItem.className = 'preview-item';
+          const iconClass = file.type.startsWith('image/') ? 'fa-file-image' : 'fa-file-pdf';
+          previewItem.innerHTML = `
+            <i class="fas ${iconClass} file-icon"></i>
+            <div class="file-info">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${(file.size / 1024).toFixed(2)} KB</div>
+            </div>
+            <button class="remove-btn" data-index="${index}" type="button">
+              <i class="fas fa-times"></i>
+            </button>`;
+          previewItem.querySelector('.remove-btn').addEventListener('click', () => {
+            files.splice(index, 1);
+            updatePreview();
+            updateUploadButton();
+          });
+          previewContainer.appendChild(previewItem);
+        });
+      }
 
-                    previewContainer.appendChild(previewItem);
+      function updateUploadButton() {
+        uploadBtn.disabled = !(files.length && doctorInput.value.trim() && deliveryDateInput.value);
+      }
 
-                    // Add event listener for remove button
-                    previewItem.querySelector('.remove-btn').addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        files.splice(index, 1);
-                        updatePreview();
-                        updateUploadButton();
-                    });
-                });
-            }
+      function handleUpload() {
+        const doctorName = doctorInput.value.trim();
+        const deliveryDate = deliveryDateInput.value;
+        const notes = document.getElementById('notes').value.trim();
 
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            function updateUploadButton() {
-                const doctorName = document.getElementById('doctorName').value.trim();
-                const deliveryDate = document.getElementById('deliveryDate').value;
-
-                uploadBtn.disabled = !(files.length > 0 && doctorName && deliveryDate);
-            }
-
-            function handleUpload() {
-                const doctorName = document.getElementById('doctorName').value.trim();
-                const deliveryDate = document.getElementById('deliveryDate').value;
-                const notes = document.getElementById('notes').value.trim();
-
-                if (files.length === 0) {
-                    showToast('Please select at least one file', 'error');
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('doctor_name', doctorName);
-                formData.append('delivery_date', deliveryDate);
-                formData.append('notes', notes);
-
-                // Append files one by one
-                files.forEach(file => {
-                    formData.append('files', file); // 'files' matches your backend param name
-                });
-
-                // Get Firebase token from wherever you store it, example localStorage
-                const token = localStorage.getItem('firebaseToken'); 
-                if (!token) {
-                    showToast('Authentication token missing', 'error');
-                    return;
-                }
-
-                fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        // Don't set Content-Type manually with FormData — browser handles it
-                    },
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to upload prescription');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    showToast('Prescription uploaded successfully!', 'success');
-                    files = [];
-                    document.getElementById('uploadForm').reset();
-                    updatePreview();
-                    updateUploadButton();
-                    setTimeout(() => {
-                        window.location.href = 'prescriptions.html';
-                    }, 1500);
-                })
-            .catch(error => {
-                console.error('Upload error:', error);
-                showToast('Failed to upload prescription', 'error');
-            });
+        if (!files.length) {
+          showToast('Please select at least one file', 'error');
+          return;
         }
 
+        firebase.auth().currentUser.getIdToken(true).then(token => {
+          const formData = new FormData();
+          formData.append('doctor_name', doctorName);
+          formData.append('delivery_date', deliveryDate);
+          formData.append('notes', notes);
+          files.forEach(file => formData.append('files', file));
 
-
-            function showToast(message, type = 'success') {
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.add('show');
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                        setTimeout(() => {
-                            document.body.removeChild(toast);
-                        }, 300);
-                    }, 3000);
-                }, 100);
-            }
-
-            // Form validation
-            const formInputs = document.querySelectorAll('input, textarea');
-            formInputs.forEach(input => {
-                input.addEventListener('change', updateUploadButton);
-                input.addEventListener('input', updateUploadButton);
-            });
+          return fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer ' + token
+            },
+            body: formData
+          });
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('Upload failed');
+          return response.json();
+        })
+        .then(() => {
+          showToast('Prescription uploaded successfully!', 'success');
+          files = [];
+          document.getElementById('uploadForm').reset();
+          updatePreview();
+          updateUploadButton();
+          setTimeout(() => {
+            window.location.href = 'prescriptions.html';
+          }, 1500);
+        })
+        .catch(err => {
+          console.error(err);
+          showToast('Failed to upload prescription', 'error');
         });
-    </script>
+      }
+
+      function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }, 100);
+      }
+
+      document.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', updateUploadButton);
+        input.addEventListener('change', updateUploadButton);
+      });
+    });
+  </script>
 </body>
 
 </html>
