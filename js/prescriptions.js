@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     console.log('User authenticated:', user.email);
-    // Initialize prescriptions page
-    initializePrescriptions();
+    initializePrescriptions(user);  // Pass user object
 
   } catch (error) {
     console.error('Auth error:', error);
@@ -32,25 +31,35 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 // Initialize prescriptions page functionality
-function initializePrescriptions() {
-  // Add any prescriptions page specific initialization code here
+function initializePrescriptions(user) {
   console.log('Initializing prescriptions page...');
-
-  // Example: Load prescriptions data
-  loadPrescriptions();
+  loadPrescriptions(user);
 }
 
-// Load user's prescriptions
-async function loadPrescriptions() {
+// Load user's prescriptions from backend
+async function loadPrescriptions(user) {
   try {
-    // TODO: Fetch prescriptions from your backend
     console.log('Loading prescriptions...');
+    const idToken = await user.getIdToken();
 
-    // Example: Simulate loading prescriptions
-    setTimeout(() => {
-      console.log('Prescriptions loaded');
-      // Update UI with prescriptions
-    }, 500);
+    const res = await fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+      headers: {
+        Authorization: 'Bearer ' + idToken
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log('Prescriptions loaded:', data);
+
+    if (typeof renderPrescriptions === 'function') {
+      renderPrescriptions(data.prescriptions || []);
+    } else {
+      console.warn('renderPrescriptions() not found in HTML');
+    }
 
   } catch (error) {
     console.error('Error loading prescriptions:', error);
