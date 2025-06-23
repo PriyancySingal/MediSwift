@@ -162,20 +162,15 @@
           cancelled: 'status-cancelled'
         }[prescription.status] || 'status-pending';
 
-        const filesHTML = (prescription.files || []).map(file => {
-          const base64Url = `data:${file.type};base64,${file.base64}`;
-          const isPdf = file.type === 'application/pdf';
+        const filesHTML = (prescription.file_ids || []).map(fileId => {
+          const url = `https://medibharat-backend.onrender.com/api/prescriptions/file/${fileId}`;
           return `
             <div class="file-item">
               <div style="display:flex; align-items:center; width: 100%;">
-                <i class="fas ${isPdf ? 'fa-file-pdf' : 'fa-file-image'} file-icon"></i>
-                <span class="file-name">${file.name}</span>
-                <span class="file-size">${formatFileSize(file.size)}</span>
+                <i class="fas fa-file-alt file-icon"></i>
+                <span class="file-name">File ID: ${fileId}</span>
+                <a href="${url}" target="_blank" class="btn" style="margin-left:auto;">View</a>
               </div>
-              ${isPdf
-                ? `<iframe src="${base64Url}" width="100%" height="300px" style="border:1px solid #ccc; border-radius:8px;"></iframe>`
-                : `<img src="${base64Url}" style="max-width:100%; border-radius:8px; border:1px solid #ccc;" alt="Prescription Image">`
-              }
             </div>
           `;
         }).join('');
