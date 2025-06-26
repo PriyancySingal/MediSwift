@@ -1,4 +1,3 @@
-// admin-dashboard.js
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) {
     alert("You must be logged in as admin.");
@@ -28,16 +27,29 @@ firebase.auth().onAuthStateChanged(async (user) => {
     return;
   }
 
-  // Store token for use in file viewing
+  // Store token for file view access
   window.adminToken = idToken;
 
   data.prescriptions.forEach(p => {
     const div = document.createElement("div");
     div.className = "prescription-item";
+
+    // Format date to IST (Asia/Kolkata)
+    const createdAtIST = new Date(p.created_at).toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+
     div.innerHTML = `
       <strong>User:</strong> ${p.user_email || "N/A"}<br>
       <strong>Doctor:</strong> ${p.doctor_name || "Unknown"}<br>
-      <strong>Date:</strong> ${new Date(p.created_at).toLocaleString()}<br>
+      <strong>Date:</strong> ${createdAtIST}<br>
       <strong>Status:</strong> ${p.status || "Pending"}<br>
       <strong>Notes:</strong> ${p.notes || "None"}<br>
       <strong>Files:</strong> ${p.file_ids.map(fid =>
