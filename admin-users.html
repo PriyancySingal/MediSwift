@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>👥 User Management - MediBharat Admin</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+</head>
+
+<body style="padding-top: 80px; background-color: #f9f7f7;">
+  <!-- Header -->
+  <header class="header">
+    <div class="container navbar">
+      <div class="logo">
+        <img src="image.png" alt="MediBharat" />
+        <span>Admin Dashboard</span>
+      </div>
+      <a href="admin-dashboard.html" class="btn btn-outline btn-sm">
+        <i class="fas fa-arrow-left"></i> Back to Main
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="container">
+    <h2 class="section-header" style="margin-bottom: 1.5rem;">
+      👥 Registered Users
+    </h2>
+    <div id="admin-welcome" style="margin-bottom: 1rem; font-weight: 600;"></div>
+
+    <div id="userList">Loading users...</div>
+  </main>
+
+  <script>
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("You must be logged in as admin.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const idToken = await user.getIdToken();
+      const res = await fetch("https://medibharat-backend.onrender.com/admin/users", {
+        headers: {
+          Authorization: "Bearer " + idToken
+        }
+      });
+
+      const userListDiv = document.getElementById("userList");
+      const welcome = document.getElementById("admin-welcome");
+
+      if (!res.ok) {
+        userListDiv.innerHTML = "❌ Access denied or error.";
+        return;
+      }
+
+      const data = await res.json();
+      welcome.innerHTML = `✅ Logged in as Admin: <strong>${user.email}</strong>`;
+      userListDiv.innerHTML = "";
+
+      if (data.users.length === 0) {
+        userListDiv.innerHTML = "No users found.";
+        return;
+      }
+
+      const table = document.createElement("table");
+      table.style.width = "100%";
+      table.style.borderCollapse = "collapse";
+      table.innerHTML = `
+        <thead>
+          <tr style="background-color: #f0f0f0;">
+            <th style="padding: 8px; border: 1px solid #ccc;">Name</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">Email</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">UID</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      `;
+
+      data.users.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="padding: 8px; border: 1px solid #ccc;">${user.name || "N/A"}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">${user.email}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">${user.uid}</td>
+        `;
+        table.querySelector("tbody").appendChild(row);
+      });
+
+      userListDiv.appendChild(table);
+    });
+  </script>
+</body>
+</html>
