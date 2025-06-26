@@ -1,26 +1,46 @@
-<!-- admin-dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - MediBharat</title>
+  <title>MediBharat Admin Dashboard</title>
 
-  <!-- Firebase -->
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Admin CSS -->
+  <link rel="stylesheet" href="css/admin-dashboard.css">
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/styles.css" />
-
 </head>
-<body>
-  <h1>🛡️ Admin Dashboard</h1>
-  <div id="admin-welcome">Loading...</div>
 
-  <h2>📁 All Prescriptions</h2>
-  <div id="prescriptionList">Fetching prescriptions...</div>
+<body>
+  <!-- Header (copied from index.html) -->
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo">
+          <img src="image.png" alt="MediBharat" class="logo-img">
+          <span>MediBharat</span>
+        </div>
+        <div class="nav-links">
+          <span class="admin-name" id="admin-welcome">🔐 Authenticating...</span>
+          <a href="#" id="logoutBtn" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>📁 All Prescriptions</h2>
+    <div id="prescriptionList"></div>
+  </main>
 
   <script src="js/admin-dashboard.js"></script>
 </body>
