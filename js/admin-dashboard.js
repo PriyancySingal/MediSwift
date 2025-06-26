@@ -12,6 +12,17 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
   const contentDiv = document.getElementById("prescriptionList");
   const welcome = document.getElementById("admin-welcome");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  // Show admin email
+  welcome.innerHTML = `✅ Logged in as Admin: <strong>${user.email}</strong>`;
+
+  // Logout logic
+  logoutBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await firebase.auth().signOut();
+    window.location.href = "index.html";
+  });
 
   if (!res.ok) {
     contentDiv.innerHTML = "❌ Access denied or error.";
@@ -19,7 +30,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 
   const data = await res.json();
-  welcome.innerHTML = `✅ Logged in as Admin: <strong>${user.email}</strong>`;
   contentDiv.innerHTML = "";
 
   if (data.prescriptions.length === 0) {
@@ -27,18 +37,14 @@ firebase.auth().onAuthStateChanged(async (user) => {
     return;
   }
 
-  // Store token for file view access
   window.adminToken = idToken;
 
   data.prescriptions.forEach(p => {
     const div = document.createElement("div");
     div.className = "prescription-item";
 
-    // 🔄 Convert UTC to IST manually (UTC + 5:30)
-    const createdAtUTC = new Date(p.created_at);
-    const istTime = new Date(createdAtUTC.getTime() + 5.5 * 60 * 60 * 1000);
-
-    const createdAtIST = istTime.toLocaleString('en-IN', {
+    const createdAtIST = new Date(p.created_at).toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -57,13 +63,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
       <strong>Files:</strong> ${p.file_ids.map(fid =>
         `<a href="#" onclick="openFile('${fid}')">View</a>`
       ).join(", ")}
-      <hr>
     `;
     contentDiv.appendChild(div);
   });
 });
 
-// 🔓 Secure File Viewer with Authorization Header
 async function openFile(fileId) {
   try {
     const token = window.adminToken;
