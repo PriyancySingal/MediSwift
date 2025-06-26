@@ -39,8 +39,12 @@ document.addEventListener('DOMContentLoaded', async function () {
    ];
 
     const adminDashboardBtn = document.getElementById("adminDashboardBtn");
-    if (user && ADMIN_UIDS.includes(user.uid) && adminDashboardBtn) {
-        adminDashboardBtn.style.display = "block";
+    if (adminDashboardBtn) {
+        if (ADMIN_UIDS.includes(user.uid)) {
+            adminDashboardBtn.style.display = "block"; // ✅ show only for admins
+        } else {
+            adminDashboardBtn.style.display = "none";  // ❌ hide for everyone else
+        }
     }
 
   } catch (error) {
