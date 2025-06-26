@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - MediBharat</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="./js/firebase-config.js"></script>
+
+  <!-- Optional styling -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .prescription {
+      background-color: #f8f8f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #prescriptionList {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Admin Dashboard</h1>
+  <p><strong>Note:</strong> This dashboard is visible only to authorized admins.</p>
+
+  <div id="prescriptionList">Loading prescriptions...</div>
+
+  <script>
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const idToken = await user.getIdToken();
+
+        const response = await fetch("https://medibharat-backend.onrender.com/admin/prescriptions", {
+          headers: {
+            Authorization: "Bearer " + idToken
+          }
+        });
+
+        const listDiv = document.getElementById("prescriptionList");
+
+        if (!response.ok) {
+          listDiv.innerHTML = "Access denied or an error occurred while loading prescriptions.";
+          return;
+        }
+
+        const data = await response.json();
+        const prescriptions = data.prescriptions;
+
+        if (prescriptions.length === 0) {
+          listDiv.innerHTML = "No prescriptions found.";
+          return;
+        }
+
+        listDiv.innerHTML = "";
+
+        prescriptions.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "prescription";
+          div.innerHTML = `
+            <strong>User Email:</strong> ${p.user_email} <br>
+            <strong>Doctor:</strong> ${p.doctor_name} <br>
+            <strong>Delivery Date:</strong> ${p.delivery_date} <br>
+            <strong>Notes:</strong> ${p.notes || "None"} <br>
+            <strong>Status:</strong> ${p.status} <br>
+            <strong>Uploaded At:</strong> ${new Date(p.created_at).toLocaleString()} <br>
+            <strong>Files:</strong> ${p.file_ids.map(id => 
+              `<a href="https://medibharat-backend.onrender.com/api/prescriptions/file/${id}" target="_blank">View</a>`
+            ).join(", ")}
+          `;
+          listDiv.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error fetching prescriptions:", err);
+        document.getElementById("prescriptionList").innerHTML = "Error loading prescriptions.";
+      }
+    });
+  </script>
+</body>
+</html>
