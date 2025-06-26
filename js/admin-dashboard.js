@@ -34,9 +34,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
     const div = document.createElement("div");
     div.className = "prescription-item";
 
-    // Format date to IST (Asia/Kolkata)
-    const createdAtIST = new Date(p.created_at).toLocaleString('en-IN', {
-      timeZone: 'Asia/Kolkata',
+    // 🔄 Convert UTC to IST manually (UTC + 5:30)
+    const createdAtUTC = new Date(p.created_at);
+    const istTime = new Date(createdAtUTC.getTime() + 5.5 * 60 * 60 * 1000);
+
+    const createdAtIST = istTime.toLocaleString('en-IN', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
