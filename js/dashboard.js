@@ -30,6 +30,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.log('User authenticated:', user.email);
     updateUserProfile(user);
     initializeDashboard();
+    // 👇 Admin visibility logic
+    const ADMIN_UIDS = [
+      "7xqvlarKRkdFc8dy5VNIhTr1qzy2", // Mridu
+      "hG3BNF84AfeJ6hT8DTnVDIAYguy2", // Sakshi
+      "vHJk3bMRoFTwdpCR0UiGSxwlvSp2", // Pragati
+      "9NcV0GgyXqeIVloVjTpBMCvac512"  // Priyancy
+   ];
+
+    const adminDashboardBtn = document.getElementById("adminDashboardBtn");
+    if (user && ADMIN_UIDS.includes(user.uid) && adminDashboardBtn) {
+        adminDashboardBtn.style.display = "block";
+    }
 
   } catch (error) {
     console.error('Auth error:', error);
