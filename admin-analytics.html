@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MediBharat Analytics</title>
+  <title>MediBharat Admin Analytics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
 </head>
+
 <body>
   <header class="header">
     <div class="container navbar">
@@ -60,68 +70,85 @@
   </main>
 
   <script>
-    const token = localStorage.getItem("firebase_token");
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("Please login as an admin.");
+        window.location.href = "login.html";
+        return;
+      }
 
-    fetch("https://medibharat-backend.onrender.com/admin/analytics", {
-      headers: { Authorization: "Bearer " + token }
-    })
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("totalUsers").textContent = data.totalUsers;
-      document.getElementById("totalPrescriptions").textContent = data.totalPrescriptions;
-      document.getElementById("avgApprovalTime").textContent = data.avgApprovalTime + " hrs";
+      try {
+        const token = await user.getIdToken();
 
-      // 📊 Status Chart
-      new Chart(document.getElementById("statusChart"), {
-        type: "pie",
-        data: {
-          labels: ["Pending", "Approved", "Rejected"],
-          datasets: [{
-            data: [
-              data.statusDistribution.pending,
-              data.statusDistribution.approved,
-              data.statusDistribution.rejected
-            ],
-            backgroundColor: ["#fbbf24", "#34d399", "#f87171"]
-          }]
+        const res = await fetch("https://medibharat-backend.onrender.com/admin/analytics", {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        });
+
+        if (!res.ok) throw new Error("Unauthorized or server error");
+
+        const data = await res.json();
+
+        // ✅ Display stats
+        document.getElementById("totalUsers").textContent = data.totalUsers;
+        document.getElementById("totalPrescriptions").textContent = data.totalPrescriptions;
+        document.getElementById("avgApprovalTime").textContent = data.avgApprovalTime + " mins";
+
+        // ✅ Pie Chart - Status
+        new Chart(document.getElementById("statusChart"), {
+          type: "pie",
+          data: {
+            labels: ["Pending", "Approved", "Rejected"],
+            datasets: [{
+              data: [
+                data.pending,
+                data.approved,
+                data.totalPrescriptions - data.pending - data.approved
+              ],
+              backgroundColor: ["#fbbf24", "#34d399", "#f87171"]
+            }]
+          }
+        });
+
+        // ✅ Line Chart - Daily Uploads
+        if (data.dailyUploads) {
+          new Chart(document.getElementById("uploadsChart"), {
+            type: "line",
+            data: {
+              labels: data.dailyUploads.map(d => d.date),
+              datasets: [{
+                label: "Uploads",
+                data: data.dailyUploads.map(d => d.count),
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59, 130, 246, 0.2)",
+                fill: true,
+                tension: 0.3
+              }]
+            }
+          });
         }
-      });
 
-      // 📈 Uploads Chart
-      new Chart(document.getElementById("uploadsChart"), {
-        type: "line",
-        data: {
-          labels: data.dailyUploads.map(d => d.date),
-          datasets: [{
-            label: "Uploads",
-            data: data.dailyUploads.map(d => d.count),
-            borderColor: "#3b82f6",
-            backgroundColor: "rgba(59, 130, 246, 0.2)",
-            fill: true,
-            tension: 0.3
-          }]
-        }
-      });
+        // ✅ Top Doctors
+        const docList = document.getElementById("topDoctorsList");
+        data.topDoctors.forEach(doc => {
+          const li = document.createElement("li");
+          li.textContent = `${doc._id || "Unknown"} (${doc.count})`;
+          docList.appendChild(li);
+        });
 
-      // 👨‍⚕️ Top Doctors
-      const docList = document.getElementById("topDoctorsList");
-      data.topDoctors.forEach(doc => {
-        const li = document.createElement("li");
-        li.textContent = `${doc.name} (${doc.count})`;
-        docList.appendChild(li);
-      });
+        // ✅ Top Users
+        const userList = document.getElementById("topUsersList");
+        data.topUsers.forEach(user => {
+          const li = document.createElement("li");
+          li.textContent = `${user._id || "Unknown"} (${user.count})`;
+          userList.appendChild(li);
+        });
 
-      // 🧑‍💻 Top Users
-      const userList = document.getElementById("topUsersList");
-      data.activeUsers.forEach(u => {
-        const li = document.createElement("li");
-        li.textContent = `${u.email} (${u.uploads})`;
-        userList.appendChild(li);
-      });
-    })
-    .catch(err => {
-      console.error("Analytics error:", err);
-      alert("Failed to load analytics");
+      } catch (err) {
+        console.error("[Analytics Error]", err);
+        alert("❌ Failed to load analytics");
+      }
     });
   </script>
 </body>
