@@ -2,15 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Analytics - MediBharat</title>
+  <title>MediBharat Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
 </head>
-<body style="background-color: #f9f9f9; padding-top: 80px;">
-
+<body>
   <header class="header">
     <div class="container navbar">
       <div class="logo">
@@ -23,103 +20,109 @@
     </div>
   </header>
 
-  <main class="container" style="margin-top: 2rem;">
+  <main class="container" style="padding-top: 80px;">
     <h2 class="section-header">📊 Analytics Overview</h2>
 
-    <!-- 🔹 Summary Cards -->
-    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
-      <div class="card" id="totalUsersCard">👤 Total Users: <strong>0</strong></div>
-      <div class="card" id="totalPrescriptionsCard">📁 Total Prescriptions: <strong>0</strong></div>
-      <div class="card" id="pendingCard">⏳ Pending: <strong>0</strong></div>
-      <div class="card" id="approvedCard">✅ Approved: <strong>0</strong></div>
-    </div>
-
-    <!-- 🔹 Top Doctors -->
-    <section style="margin-top: 3rem;">
-      <h3>🏥 Top 5 Referenced Doctors</h3>
-      <canvas id="doctorsChart" height="120"></canvas>
+    <section class="analytics-grid" style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+      <div class="card stat-card">
+        <h3>Total Users</h3>
+        <p id="totalUsers">--</p>
+      </div>
+      <div class="card stat-card">
+        <h3>Total Prescriptions</h3>
+        <p id="totalPrescriptions">--</p>
+      </div>
+      <div class="card stat-card">
+        <h3>Avg Approval Time</h3>
+        <p id="avgApprovalTime">--</p>
+      </div>
     </section>
 
-    <!-- 🔹 Active Users -->
-    <section style="margin-top: 3rem;">
-      <h3>🔥 Most Active Users (by uploads)</h3>
-      <canvas id="usersChart" height="120"></canvas>
+    <section style="margin-top: 2rem;">
+      <h3>Status Breakdown</h3>
+      <canvas id="statusChart" height="150"></canvas>
+    </section>
+
+    <section style="margin-top: 2rem;">
+      <h3>Daily Upload Trends</h3>
+      <canvas id="uploadsChart" height="150"></canvas>
+    </section>
+
+    <section style="margin-top: 2rem;">
+      <h3>Top Doctors Referenced</h3>
+      <ul id="topDoctorsList"></ul>
+    </section>
+
+    <section style="margin-top: 2rem;">
+      <h3>Top Active Users</h3>
+      <ul id="topUsersList"></ul>
     </section>
   </main>
 
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const auth = firebase.auth();
+    const token = localStorage.getItem("firebase_token");
 
-      auth.onAuthStateChanged(async (user) => {
-        if (!user) return window.location.href = "login.html";
+    fetch("https://medibharat-backend.onrender.com/admin/analytics", {
+      headers: { Authorization: "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("totalUsers").textContent = data.totalUsers;
+      document.getElementById("totalPrescriptions").textContent = data.totalPrescriptions;
+      document.getElementById("avgApprovalTime").textContent = data.avgApprovalTime + " hrs";
 
-        const idToken = await user.getIdToken();
-        const res = await fetch("https://medibharat-backend.onrender.com/admin/analytics", {
-          headers: { Authorization: "Bearer " + idToken }
-        });
-
-        if (!res.ok) {
-          alert("❌ Unauthorized or error");
-          return;
+      // 📊 Status Chart
+      new Chart(document.getElementById("statusChart"), {
+        type: "pie",
+        data: {
+          labels: ["Pending", "Approved", "Rejected"],
+          datasets: [{
+            data: [
+              data.statusDistribution.pending,
+              data.statusDistribution.approved,
+              data.statusDistribution.rejected
+            ],
+            backgroundColor: ["#fbbf24", "#34d399", "#f87171"]
+          }]
         }
-
-        const data = await res.json();
-        document.getElementById("totalUsersCard").innerHTML = `👤 Total Users: <strong>${data.total_users}</strong>`;
-        document.getElementById("totalPrescriptionsCard").innerHTML = `📁 Total Prescriptions: <strong>${data.total_prescriptions}</strong>`;
-        document.getElementById("pendingCard").innerHTML = `⏳ Pending: <strong>${data.pending}</strong>`;
-        document.getElementById("approvedCard").innerHTML = `✅ Approved: <strong>${data.approved}</strong>`;
-
-        // Draw charts
-        drawChart("doctorsChart", "Top Doctors", data.top_doctors.map(d => d.doctor), data.top_doctors.map(d => d.count));
-        drawChart("usersChart", "Most Active Users", data.most_active_users.map(u => u.email), data.most_active_users.map(u => u.count));
       });
 
-      function drawChart(canvasId, label, labels, data) {
-        new Chart(document.getElementById(canvasId), {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: label,
-              backgroundColor: '#3f72af',
-              data: data
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { display: false }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: { stepSize: 1 }
-              }
-            }
-          }
-        });
-      }
+      // 📈 Uploads Chart
+      new Chart(document.getElementById("uploadsChart"), {
+        type: "line",
+        data: {
+          labels: data.dailyUploads.map(d => d.date),
+          datasets: [{
+            label: "Uploads",
+            data: data.dailyUploads.map(d => d.count),
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59, 130, 246, 0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        }
+      });
+
+      // 👨‍⚕️ Top Doctors
+      const docList = document.getElementById("topDoctorsList");
+      data.topDoctors.forEach(doc => {
+        const li = document.createElement("li");
+        li.textContent = `${doc.name} (${doc.count})`;
+        docList.appendChild(li);
+      });
+
+      // 🧑‍💻 Top Users
+      const userList = document.getElementById("topUsersList");
+      data.activeUsers.forEach(u => {
+        const li = document.createElement("li");
+        li.textContent = `${u.email} (${u.uploads})`;
+        userList.appendChild(li);
+      });
+    })
+    .catch(err => {
+      console.error("Analytics error:", err);
+      alert("Failed to load analytics");
     });
   </script>
-
-  <style>
-    .card {
-      background-color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      font-size: 1.1rem;
-    }
-
-    canvas {
-      background: white;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-top: 1rem;
-    }
-  </style>
-
 </body>
 </html>
