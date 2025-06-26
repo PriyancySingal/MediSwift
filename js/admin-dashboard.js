@@ -28,6 +28,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
     return;
   }
 
+  // Store token for use in file viewing
+  window.adminToken = idToken;
+
   data.prescriptions.forEach(p => {
     const div = document.createElement("div");
     div.className = "prescription-item";
@@ -38,10 +41,36 @@ firebase.auth().onAuthStateChanged(async (user) => {
       <strong>Status:</strong> ${p.status || "Pending"}<br>
       <strong>Notes:</strong> ${p.notes || "None"}<br>
       <strong>Files:</strong> ${p.file_ids.map(fid =>
-        `<a href="https://medibharat-backend.onrender.com/api/prescriptions/file/${fid}" target="_blank">View</a>`
+        `<a href="#" onclick="openFile('${fid}')">View</a>`
       ).join(", ")}
       <hr>
     `;
     contentDiv.appendChild(div);
   });
 });
+
+// 🔓 Secure File Viewer with Authorization Header
+async function openFile(fileId) {
+  try {
+    const token = window.adminToken;
+    const url = `https://medibharat-backend.onrender.com/api/prescriptions/file/${fileId}`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!response.ok) {
+      alert("❌ File not found or unauthorized");
+      return;
+    }
+
+    const blob = await response.blob();
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  } catch (error) {
+    console.error("File view error:", error);
+    alert("❌ Error opening file.");
+  }
+}
