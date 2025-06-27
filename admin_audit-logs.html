@@ -92,8 +92,7 @@
   tbody.innerHTML = '';
 
   logs.forEach(log => {
-    const raw = log.timestamp;
-    const date = typeof raw === "string" ? new Date(raw) : new Date(raw?.$date || raw);
+    const date = new Date(log.timestamp);
 
     const istTime = date.toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
