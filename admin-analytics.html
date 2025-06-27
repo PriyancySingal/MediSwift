@@ -9,10 +9,10 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Firebase (if you need it here) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
@@ -21,8 +21,11 @@
     body {
       background-color: #f9f7f7;
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 1rem;
     }
     .header {
       background-color: white;
@@ -37,19 +40,6 @@
       margin: auto;
       padding: 0 1rem;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-    .logo img {
-      height: 40px;
-      margin-right: 10px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem 1rem;
-    }
     .chart-container {
       background: white;
       padding: 2rem;
@@ -57,19 +47,15 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       margin-bottom: 2rem;
     }
-    h2.section-header {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Admin Header -->
+  <!-- Header -->
   <header class="header">
     <div class="navbar">
-      <div class="logo">
-        <img src="image.png" alt="MediBharat" />
+      <div class="logo" style="display: flex; align-items: center;">
+        <img src="image.png" alt="MediBharat" style="height: 40px; margin-right: 10px;" />
         <span style="font-weight: bold; font-size: 1.2rem;">Analytics</span>
       </div>
       <div>
@@ -83,95 +69,137 @@
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Content -->
   <main class="container">
-    <h2 class="section-header">📊 Admin Analytics</h2>
+    <h2 style="font-size: 1.8rem;">📊 Admin Analytics</h2>
 
     <div class="chart-container">
-      <h3 style="margin-bottom: 1rem;">Monthly Prescription Trends</h3>
-      <canvas id="prescriptionChart"></canvas>
+      <h3>Daily Prescription Uploads</h3>
+      <canvas id="dailyUploadsChart"></canvas>
     </div>
 
     <div class="chart-container">
-      <h3 style="margin-bottom: 1rem;">Top 5 Prescribed Medicines</h3>
-      <canvas id="medicineChart"></canvas>
+      <h3>Top Doctors</h3>
+      <canvas id="topDoctorsChart"></canvas>
     </div>
 
     <div class="chart-container">
-      <h3 style="margin-bottom: 1rem;">User Registrations Over Time</h3>
-      <canvas id="userChart"></canvas>
+      <h3>Top Uploading Users</h3>
+      <canvas id="topUsersChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Uploads by State</h3>
+      <canvas id="stateUploadsChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Prescription Summary</h3>
+      <p id="summaryText">Loading...</p>
     </div>
   </main>
 
-  <!-- Chart.js Scripts -->
+  <!-- Script to Load Charts -->
   <script>
-    // Prescription Chart
-    const ctx1 = document.getElementById('prescriptionChart').getContext('2d');
-    const prescriptionChart = new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-          label: 'Prescriptions',
-          data: [120, 150, 170, 140, 190, 230],
-          backgroundColor: 'rgba(0, 119, 204, 0.2)',
-          borderColor: '#0077cc',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: true,
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
+    async function loadAnalytics() {
+      try {
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          alert("You must be logged in");
+          window.location.href = "login.html";
+          return;
         }
+
+        const token = await user.getIdToken();
+        const res = await fetch("https://YOUR_BACKEND_URL/admin/analytics", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch analytics data");
+        }
+
+        const data = await res.json();
+
+        // ✅ Prescription Summary
+        document.getElementById("summaryText").innerHTML = `
+          Total Prescriptions: <strong>${data.totalPrescriptions}</strong><br/>
+          Total Users: <strong>${data.totalUsers}</strong><br/>
+          Approved: <strong>${data.approved}</strong> | Pending: <strong>${data.pending}</strong><br/>
+          Avg Approval Time: <strong>${data.avgApprovalTime} minutes</strong>
+        `;
+
+        // ✅ Daily Uploads
+        new Chart(document.getElementById('dailyUploadsChart').getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: data.dailyUploads.map(d => d.date),
+            datasets: [{
+              label: 'Uploads',
+              data: data.dailyUploads.map(d => d.count),
+              borderColor: '#0077cc',
+              fill: true,
+              backgroundColor: 'rgba(0, 119, 204, 0.1)',
+              tension: 0.3
+            }]
+          }
+        });
+
+        // ✅ Top Doctors
+        new Chart(document.getElementById('topDoctorsChart').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: data.topDoctors.map(d => d.name),
+            datasets: [{
+              label: 'Prescriptions',
+              data: data.topDoctors.map(d => d.count),
+              backgroundColor: '#36a2eb'
+            }]
+          }
+        });
+
+        // ✅ Top Uploaders
+        new Chart(document.getElementById('topUsersChart').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: data.topUsers.map(u => u.email),
+            datasets: [{
+              label: 'Uploads',
+              data: data.topUsers.map(u => u.count),
+              backgroundColor: '#ff6384'
+            }]
+          }
+        });
+
+        // ✅ Uploads by State
+        new Chart(document.getElementById('stateUploadsChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: data.uploadsByState.map(s => s.state),
+            datasets: [{
+              label: 'Uploads',
+              data: data.uploadsByState.map(s => s.count),
+              backgroundColor: ['#4bc0c0', '#ffcd56', '#ff9f40', '#9966ff', '#c9cbcf']
+            }]
+          }
+        });
+
+      } catch (err) {
+        console.error("Analytics error:", err);
+        alert("Could not load analytics. Check console for details.");
       }
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) loadAnalytics();
     });
 
-    // Medicine Chart
-    const ctx2 = document.getElementById('medicineChart').getContext('2d');
-    const medicineChart = new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: ['Paracetamol', 'Crocin', 'Telma 40', 'Dolo 650', 'Aspirin'],
-        datasets: [{
-          label: 'Prescriptions',
-          data: [300, 250, 180, 220, 160],
-          backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
-        }]
-      },
-      options: {
-        responsive: true,
-        indexAxis: 'y',
-        scales: {
-          x: { beginAtZero: true }
-        }
-      }
-    });
-
-    // User Chart
-    const ctx3 = document.getElementById('userChart').getContext('2d');
-    const userChart = new Chart(ctx3, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-          label: 'New Users',
-          data: [50, 80, 60, 90, 100, 120],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: '#ff6384',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "login.html";
+      });
     });
   </script>
 </body>
