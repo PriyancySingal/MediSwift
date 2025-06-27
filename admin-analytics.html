@@ -5,14 +5,9 @@
   <title>Analytics - MediBharat Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Styles & Icons -->
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
@@ -42,16 +37,22 @@
     }
     .chart-container {
       background: white;
-      padding: 2rem;
+      padding: 1rem;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .chart-container canvas {
+      max-width: 100%;
+      height: 280px !important;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header class="header">
     <div class="navbar">
       <div class="logo" style="display: flex; align-items: center;">
@@ -69,7 +70,6 @@
     </div>
   </header>
 
-  <!-- Content -->
   <main class="container">
     <h2 style="font-size: 1.8rem;">📊 Admin Analytics</h2>
 
@@ -95,11 +95,10 @@
 
     <div class="chart-container">
       <h3>Prescription Summary</h3>
-      <p id="summaryText">Loading...</p>
+      <p id="summaryText" style="font-size: 1rem; color: #333;">Loading...</p>
     </div>
   </main>
 
-  <!-- Script to Load Charts -->
   <script>
     async function loadAnalytics() {
       try {
@@ -112,18 +111,13 @@
 
         const token = await user.getIdToken();
         const res = await fetch("https://medibharat-backend.onrender.com/admin/analytics", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch analytics data");
-        }
+        if (!res.ok) throw new Error("Failed to fetch analytics data");
 
         const data = await res.json();
 
-        // ✅ Prescription Summary
         document.getElementById("summaryText").innerHTML = `
           Total Prescriptions: <strong>${data.totalPrescriptions}</strong><br/>
           Total Users: <strong>${data.totalUsers}</strong><br/>
@@ -131,7 +125,6 @@
           Avg Approval Time: <strong>${data.avgApprovalTime} minutes</strong>
         `;
 
-        // ✅ Daily Uploads
         new Chart(document.getElementById('dailyUploadsChart').getContext('2d'), {
           type: 'line',
           data: {
@@ -147,7 +140,6 @@
           }
         });
 
-        // ✅ Top Doctors
         new Chart(document.getElementById('topDoctorsChart').getContext('2d'), {
           type: 'bar',
           data: {
@@ -160,7 +152,6 @@
           }
         });
 
-        // ✅ Top Uploaders
         new Chart(document.getElementById('topUsersChart').getContext('2d'), {
           type: 'bar',
           data: {
@@ -173,7 +164,6 @@
           }
         });
 
-        // ✅ Uploads by State
         new Chart(document.getElementById('stateUploadsChart').getContext('2d'), {
           type: 'doughnut',
           data: {
