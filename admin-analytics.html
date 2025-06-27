@@ -2,50 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MediBharat Analytics</title>
+  <title>MediBharat Admin Analytics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
-  <style>
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-      text-align: center;
-    }
-
-    canvas {
-      max-width: 100%;
-      max-height: 220px;
-      margin: 0 auto 2rem;
-    }
-
-    h3 {
-      margin-bottom: 0.5rem;
-    }
-
-    ul.compact-list {
-      list-style: none;
-      padding: 0;
-      font-size: 0.95rem;
-      margin: 0.5rem 0;
-    }
-
-    ul.compact-list li {
-      margin-bottom: 6px;
-    }
-  </style>
 </head>
 
 <body>
@@ -56,7 +22,7 @@
         <span>Admin Analytics</span>
       </div>
       <a href="admin-dashboard.html" class="btn btn-outline btn-sm">
-        ⬅ Back
+        ⬅ Back to Dashboard
       </a>
     </div>
   </header>
@@ -64,39 +30,38 @@
   <main class="container" style="padding-top: 80px;">
     <h2 class="section-header">📊 Overview</h2>
 
-    <div class="stat-grid">
-      <div class="stat-card">
-        <h4>Total Users</h4>
-        <p id="totalUsers">--</p>
-      </div>
-      <div class="stat-card">
-        <h4>Total Prescriptions</h4>
-        <p id="totalPrescriptions">--</p>
-      </div>
-      <div class="stat-card">
-        <h4>Avg Approval Time</h4>
-        <p id="avgApprovalTime">-- mins</p>
-      </div>
-    </div>
+    <section class="analytics-grid" style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+      <div class="card stat-card"><h3>Total Users</h3><p id="totalUsers">--</p></div>
+      <div class="card stat-card"><h3>Total Prescriptions</h3><p id="totalPrescriptions">--</p></div>
+      <div class="card stat-card"><h3>Avg Approval Time</h3><p id="avgApprovalTime">--</p></div>
+    </section>
 
-    <h3>Status Distribution</h3>
-    <canvas id="statusChart"></canvas>
+    <section style="margin-top: 2rem;">
+      <h3>Status Distribution</h3>
+      <canvas id="statusChart" height="200" style="max-width: 400px;"></canvas>
+    </section>
 
-    <h3>Daily Uploads</h3>
-    <canvas id="dailyChart"></canvas>
+    <section style="margin-top: 2rem;">
+      <h3>Daily Uploads</h3>
+      <canvas id="uploadsChart" height="200" style="max-width: 600px;"></canvas>
+    </section>
 
-    <h3>Top 5 Doctors</h3>
-    <ul id="topDoctorsList" class="compact-list"></ul>
+    <section style="margin-top: 2rem;">
+      <h3>Top 5 Doctors</h3>
+      <ul id="topDoctorsList"></ul>
+    </section>
 
-    <h3>Top Users</h3>
-    <ul id="topUsersList" class="compact-list"></ul>
+    <section style="margin-top: 2rem;">
+      <h3>Top Users</h3>
+      <ul id="topUsersList"></ul>
+    </section>
   </main>
 
   <script>
     firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
-        alert("Login as admin first");
-        location.href = "login.html";
+        alert("Please login as an admin.");
+        window.location.href = "login.html";
         return;
       }
 
@@ -106,73 +71,77 @@
           headers: { Authorization: "Bearer " + token }
         });
 
-        if (!res.ok) throw new Error("Unauthorized");
-
+        if (!res.ok) throw new Error("Unauthorized or server error");
         const data = await res.json();
-        document.getElementById("totalUsers").textContent = data.totalUsers;
-        document.getElementById("totalPrescriptions").textContent = data.totalPrescriptions;
-        document.getElementById("avgApprovalTime").textContent = data.avgApprovalTime;
 
-        // Pie Chart
+        document.getElementById("totalUsers").textContent = data.totalUsers || 0;
+        document.getElementById("totalPrescriptions").textContent = data.totalPrescriptions || 0;
+        document.getElementById("avgApprovalTime").textContent = (data.avgApprovalTime || 0) + " mins";
+
+        // ✅ Pie Chart - Status
+        const pending = data.pending || 0;
+        const approved = data.approved || 0;
+        const rejected = (data.totalPrescriptions || 0) - pending - approved;
         new Chart(document.getElementById("statusChart"), {
-          type: "doughnut",
+          type: "pie",
           data: {
             labels: ["Pending", "Approved", "Rejected"],
             datasets: [{
-              data: [
-                data.pending,
-                data.approved,
-                data.totalPrescriptions - data.pending - data.approved
-              ],
-              backgroundColor: ["#facc15", "#4ade80", "#f87171"]
+              data: [pending, approved, rejected >= 0 ? rejected : 0],
+              backgroundColor: ["#fbbf24", "#34d399", "#f87171"]
             }]
           },
           options: {
-            responsive: true,
-            plugins: { legend: { position: 'bottom' } }
+            plugins: { legend: { position: "bottom" } }
           }
         });
 
-        // Line Chart
-        new Chart(document.getElementById("dailyChart"), {
-          type: "line",
-          data: {
-            labels: data.dailyUploads.map(d => d.date),
-            datasets: [{
-              label: "Uploads",
-              data: data.dailyUploads.map(d => d.count),
-              borderColor: "#60a5fa",
-              backgroundColor: "rgba(96,165,250,0.2)",
-              fill: true,
-              tension: 0.3
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: { beginAtZero: true }
+        // ✅ Line Chart - Daily Uploads
+        if (data.dailyUploads && data.dailyUploads.length > 0) {
+          new Chart(document.getElementById("uploadsChart"), {
+            type: "line",
+            data: {
+              labels: data.dailyUploads.map(d => d.date),
+              datasets: [{
+                label: "Uploads",
+                data: data.dailyUploads.map(d => d.count),
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59, 130, 246, 0.2)",
+                fill: true,
+                tension: 0.3
+              }]
+            },
+            options: {
+              scales: {
+                y: { beginAtZero: true }
+              },
+              plugins: {
+                legend: { display: false }
+              }
             }
-          }
-        });
+          });
+        } else {
+          document.getElementById("uploadsChart").replaceWith("No upload data available.");
+        }
 
-        // Doctors
+        // ✅ Top Doctors
         const docList = document.getElementById("topDoctorsList");
-        data.topDoctors.forEach(doc => {
+        (data.topDoctors || []).forEach(doc => {
           const li = document.createElement("li");
           li.textContent = `${doc._id || "Unknown"} (${doc.count})`;
           docList.appendChild(li);
         });
 
-        // Users
+        // ✅ Top Users
         const userList = document.getElementById("topUsersList");
-        data.topUsers.forEach(u => {
+        (data.topUsers || []).forEach(user => {
           const li = document.createElement("li");
-          li.textContent = `${u._id || "Unknown"} (${u.count})`;
+          li.textContent = `${user._id || "Unknown"} (${user.count})`;
           userList.appendChild(li);
         });
 
       } catch (err) {
-        console.error("Analytics error", err);
+        console.error("[Analytics Error]", err);
         alert("❌ Analytics failed to load.");
       }
     });
