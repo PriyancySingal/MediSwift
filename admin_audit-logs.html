@@ -1,0 +1,136 @@
+#admin_audit-logs.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Audit Logs - MediBharat Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; margin: 0; }
+    .container { max-width: 1100px; margin: auto; padding: 2rem 1rem; }
+    .header { background: #fff; border-bottom: 1px solid #ddd; padding: 1rem 0; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .logo img { height: 40px; margin-right: 10px; }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+
+    .search-bar { margin: 1.5rem 0; display: flex; gap: 0.5rem; }
+    .search-bar input { flex: 1; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 5px; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 5px; overflow: hidden; }
+    th, td { padding: 0.75rem 1rem; text-align: left; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f2f2f2; }
+
+    .timestamp { font-family: monospace; font-size: 0.9rem; color: #555; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container navbar">
+    <div class="logo" style="display: flex; align-items: center;">
+      <img src="image.png" alt="MediBharat" />
+      <span style="font-weight: bold; font-size: 1.2rem;">Audit Logs</span>
+    </div>
+    <div>
+      <a href="admin-dashboard.html" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      <button id="logoutBtn" class="btn btn-danger btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="Search by name, email, or event..." />
+  </div>
+
+  <table id="logTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Event</th>
+        <th>Timestamp (IST)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Populated via JS -->
+    </tbody>
+  </table>
+</main>
+
+<script>
+  let allLogs = [];
+
+  async function fetchAuditLogs() {
+    const user = firebase.auth().currentUser;
+    if (!user) return (window.location.href = 'login.html');
+
+    const token = await user.getIdToken();
+    const res = await fetch("https://medibharat-backend.onrender.com/admin/audit-logs", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      alert("Failed to load audit logs");
+      return;
+    }
+
+    const data = await res.json();
+    allLogs = data.logs || [];
+    renderTable(allLogs);
+  }
+
+  function renderTable(logs) {
+    const tbody = document.querySelector("#logTable tbody");
+    tbody.innerHTML = '';
+
+    logs.forEach(log => {
+      const istTime = new Date(log.timestamp).toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata"
+      });
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${log.name || '—'}</td>
+        <td>${log.email || '—'}</td>
+        <td>${log.event || '—'}</td>
+        <td class="timestamp">${istTime}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById("searchInput").addEventListener("input", function () {
+    const term = this.value.toLowerCase();
+    const filtered = allLogs.filter(log =>
+      log.name?.toLowerCase().includes(term) ||
+      log.email?.toLowerCase().includes(term) ||
+      log.event?.toLowerCase().includes(term)
+    );
+    renderTable(filtered);
+  });
+
+  document.getElementById("logoutBtn").onclick = () => {
+    firebase.auth().signOut().then(() => {
+      window.location.href = 'login.html';
+    });
+  };
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) fetchAuditLogs();
+  });
+</script>
+
+</body>
+</html>
