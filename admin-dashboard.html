@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Admin Dashboard - MediBharat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- External Styles & Icons -->
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -13,31 +15,35 @@
   <script src="js/firebase-config.js"></script>
   <script src="admin-dashboard.js" defer></script>
 </head>
+
 <body style="background-color: #f9f7f7;">
+
   <!-- Admin Header -->
-  <header class="header">
-    <div class="container navbar">
-      <div class="logo">
-        <img src="image.png" alt="MediBharat" />
-        <span>Admin Dashboard</span>
+  <header class="header" style="background-color: white; border-bottom: 1px solid #ddd; padding: 1rem 0;">
+    <div class="container navbar" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; padding: 0 1rem;">
+      <div class="logo" style="display: flex; align-items: center;">
+        <img src="image.png" alt="MediBharat" style="height: 40px; margin-right: 10px;" />
+        <span style="font-weight: bold; font-size: 1.2rem;">Admin Dashboard</span>
       </div>
       <div>
-        <a href="dashboard.html" class="btn btn-outline btn-sm">
+        <a href="dashboard.html" class="btn btn-outline btn-sm" style="margin-right: 1rem;">
           <i class="fas fa-arrow-left"></i> Back to Site
         </a>
-        <button id="logoutBtn" class="btn btn-sm btn-danger" style="margin-left: 1rem;">
+        <button id="logoutBtn" class="btn btn-sm btn-danger">
           <i class="fas fa-sign-out-alt"></i> Logout
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Page Content -->
-  <main class="container" style="padding-top: 80px;">
-    <h2 class="section-header">🛡️ Welcome, Admin!</h2>
+  <!-- Main Content -->
+  <main class="container" style="max-width: 1200px; margin: auto; padding-top: 80px;">
+    <h2 class="section-header" style="font-size: 1.8rem; margin-bottom: 0.5rem;">🛡️ Welcome, Admin!</h2>
     <p style="font-size: 1rem; color: #444;">Select an area to manage:</p>
 
+    <!-- Admin Options -->
     <div class="admin-options" style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem;">
+      <!-- Original Features -->
       <a href="admin-prescriptions.html" class="btn btn-primary" style="min-width: 250px;">
         📁 Manage Prescriptions
       </a>
@@ -46,6 +52,47 @@
       </a>
       <a href="admin-analytics.html" class="btn btn-outline" style="min-width: 250px;">
         📊 Analytics
+      </a>
+
+      <!-- Advanced Admin Features -->
+      <a href="admin-doctors.html" class="btn btn-outline" style="min-width: 250px;">
+        ⚕️ Doctor Verification
+      </a>
+      <a href="admin-pharmacies.html" class="btn btn-outline" style="min-width: 250px;">
+        🏥 Pharmacy Management
+      </a>
+      <a href="admin-tracking.html" class="btn btn-outline" style="min-width: 250px;">
+        📦 Prescription Fulfillment
+      </a>
+      <a href="admin-insights.html" class="btn btn-outline" style="min-width: 250px;">
+        🧠 AI Health Insights
+      </a>
+      <a href="admin-feedback.html" class="btn btn-outline" style="min-width: 250px;">
+        📨 Feedback & Tickets
+      </a>
+      <a href="admin-abuse.html" class="btn btn-outline" style="min-width: 250px;">
+        🚨 Abuse Reports
+      </a>
+      <a href="admin-content.html" class="btn btn-outline" style="min-width: 250px;">
+        📝 Content Management
+      </a>
+      <a href="admin-payments.html" class="btn btn-outline" style="min-width: 250px;">
+        💳 Payments & Refunds
+      </a>
+      <a href="admin-invoices.html" class="btn btn-outline" style="min-width: 250px;">
+        📃 Invoice & Tax Reports
+      </a>
+      <a href="admin-roles.html" class="btn btn-outline" style="min-width: 250px;">
+        🛡️ Sub-admin Roles
+      </a>
+      <a href="admin-logs.html" class="btn btn-outline" style="min-width: 250px;">
+        🕒 Audit Logs
+      </a>
+      <a href="admin-campaigns.html" class="btn btn-outline" style="min-width: 250px;">
+        📢 Campaign Manager
+      </a>
+      <a href="admin-newsletters.html" class="btn btn-outline" style="min-width: 250px;">
+        📬 Newsletters
       </a>
     </div>
   </main>
