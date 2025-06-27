@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Analytics - MediBharat Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Styles & Icons -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase (if you need it here) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <style>
+    body {
+      background-color: #f9f7f7;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: white;
+      border-bottom: 1px solid #ddd;
+      padding: 1rem 0;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 40px;
+      margin-right: 10px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 1rem;
+    }
+    .chart-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    h2.section-header {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Header -->
+  <header class="header">
+    <div class="navbar">
+      <div class="logo">
+        <img src="image.png" alt="MediBharat" />
+        <span style="font-weight: bold; font-size: 1.2rem;">Analytics</span>
+      </div>
+      <div>
+        <a href="admin-dashboard.html" class="btn btn-outline btn-sm" style="margin-right: 1rem;">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <button id="logoutBtn" class="btn btn-sm btn-danger">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <h2 class="section-header">📊 Admin Analytics</h2>
+
+    <div class="chart-container">
+      <h3 style="margin-bottom: 1rem;">Monthly Prescription Trends</h3>
+      <canvas id="prescriptionChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3 style="margin-bottom: 1rem;">Top 5 Prescribed Medicines</h3>
+      <canvas id="medicineChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3 style="margin-bottom: 1rem;">User Registrations Over Time</h3>
+      <canvas id="userChart"></canvas>
+    </div>
+  </main>
+
+  <!-- Chart.js Scripts -->
+  <script>
+    // Prescription Chart
+    const ctx1 = document.getElementById('prescriptionChart').getContext('2d');
+    const prescriptionChart = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Prescriptions',
+          data: [120, 150, 170, 140, 190, 230],
+          backgroundColor: 'rgba(0, 119, 204, 0.2)',
+          borderColor: '#0077cc',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    // Medicine Chart
+    const ctx2 = document.getElementById('medicineChart').getContext('2d');
+    const medicineChart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Paracetamol', 'Crocin', 'Telma 40', 'Dolo 650', 'Aspirin'],
+        datasets: [{
+          label: 'Prescriptions',
+          data: [300, 250, 180, 220, 160],
+          backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
+        }]
+      },
+      options: {
+        responsive: true,
+        indexAxis: 'y',
+        scales: {
+          x: { beginAtZero: true }
+        }
+      }
+    });
+
+    // User Chart
+    const ctx3 = document.getElementById('userChart').getContext('2d');
+    const userChart = new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'New Users',
+          data: [50, 80, 60, 90, 100, 120],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: '#ff6384',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
