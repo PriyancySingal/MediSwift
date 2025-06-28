@@ -234,11 +234,11 @@
             font-size: 11px;
             color: #64748b;
             text-align: center;
-            padding: 10px 20px 0;
+            padding: 1px 20px 0;
             line-height: 1.4;
         }
         #menuButtonsContainer {
-    padding: 10px 1.6px;
+    padding: 1.5px 1.6px;
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
