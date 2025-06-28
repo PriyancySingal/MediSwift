@@ -57,6 +57,15 @@ function showMenuButtons() {
         button.onclick = () => handleSectionClick(label);
         menuButtonsContainer.appendChild(button);
     }
+    const exitButton = document.createElement("button");
+    exitButton.textContent = "❌ Exit";
+    exitButton.className = "chat-button exit-button";
+    exitButton.onclick = () => {
+        waitingForDietPreference = false;
+        menuButtonsContainer.innerHTML = '';
+        addMessage("🩺 Take care and stay healthy! I'm here whenever you need me.");
+    };
+    menuButtonsContainer.appendChild(exitButton);
 }
 
 async function sendMessage() {
@@ -188,6 +197,16 @@ function handleSectionClick(label) {
         menuButtonsContainer.innerHTML = '';
         menuButtonsContainer.appendChild(vegBtn);
         menuButtonsContainer.appendChild(nonVegBtn);
+        const exitButton = document.createElement("button");
+        exitButton.textContent = "❌ Exit";
+        exitButton.className = "chat-button exit-button";
+        exitButton.onclick = () => {
+            waitingForDietPreference = false;
+            menuButtonsContainer.innerHTML = '';
+            addMessage("🌿 Stay well and feel free to ask me anything else later!");
+        };
+        menuButtonsContainer.appendChild(exitButton);
+
 
         waitingForDietPreference = true;
         return;
