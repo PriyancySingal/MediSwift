@@ -42,7 +42,7 @@ async function loadPrescriptions(user) {
     console.log('Loading prescriptions...');
     const idToken = await user.getIdToken();
 
-    const res = await fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+    const res = await fetch('https://medibharat-backend-1.onrender.com/api/prescriptions', {
       headers: {
         Authorization: 'Bearer ' + idToken
       }
