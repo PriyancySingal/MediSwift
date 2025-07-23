@@ -94,7 +94,7 @@
       }
 
       const token = await user.getIdToken();
-      const res = await fetch("https://medibharat-backend.onrender.com/admin/doctors", {
+      const res = await fetch("https://medibharat-backend-1.onrender.com/admin/doctors", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -149,7 +149,7 @@
   async function updateStatus(id, status) {
     try {
       const token = await firebase.auth().currentUser.getIdToken();
-      const res = await fetch(`https://medibharat-backend.onrender.com/admin/doctors/${id}/status`, {
+      const res = await fetch(`https://medibharat-backend-1.onrender.com/admin/doctors/${id}/status`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
