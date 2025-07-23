@@ -84,7 +84,7 @@
           .then(() => auth.currentUser.getIdToken())
           .then((idToken) => {
             localStorage.setItem('firebaseToken', idToken); // <-- Added here
-            return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
+            return fetch("https://medibharat-backend-1.onrender.com/api/sync-user", {
               method: "POST",
               headers: {
                 Authorization: "Bearer " + idToken,
@@ -98,7 +98,7 @@
           })
           .then(() => {
             // 2. Log event to auth_events
-            return fetch("https://medibharat-backend.onrender.com/track-auth", {
+            return fetch("https://medibharat-backend-1.onrender.com/track-auth", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -142,7 +142,7 @@
             .then(() => auth.currentUser.getIdToken())
             .then((idToken) => {
               localStorage.setItem('firebaseToken', idToken); // <-- Added here
-              return fetch("https://medibharat-backend.onrender.com/api/sync-user", {
+              return fetch("https://medibharat-backend-1.onrender.com/api/sync-user", {
                 method: "POST",
                 headers: {
                   Authorization: "Bearer " + idToken,
@@ -156,7 +156,7 @@
             })
             .then(() => {
               // 2. Log event to auth_events
-              return fetch("https://medibharat-backend.onrender.com/track-auth", {
+              return fetch("https://medibharat-backend-1.onrender.com/track-auth", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
