@@ -141,7 +141,7 @@
       }
 
       const idToken = await user.getIdToken();
-      const res = await fetch("https://medibharat-backend.onrender.com/admin/users", {
+      const res = await fetch("https://medibharat-backend-1.onrender.com/admin/users", {
         headers: {
           Authorization: "Bearer " + idToken
         }
