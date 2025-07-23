@@ -163,7 +163,7 @@
         }[prescription.status] || 'status-pending';
 
         const filesHTML = (prescription.file_ids || []).map(fileId => {
-          const url = `https://medibharat-backend.onrender.com/api/prescriptions/file/${fileId}`;
+          const url = `https://medibharat-backend-1.onrender.com/api/prescriptions/file/${fileId}`;
           return `
             <div class="file-item">
               <div style="display:flex; align-items:center; width: 100%;">
@@ -210,7 +210,7 @@
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         user.getIdToken().then(idToken => {
-          fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+          fetch('https://medibharat-backend-1.onrender.com/api/prescriptions', {
             headers: { Authorization: 'Bearer ' + idToken }
           })
           .then(res => res.json())
@@ -239,7 +239,7 @@
 
       try {
         const idToken = await user.getIdToken();
-        const response = await fetch(`https://medibharat-backend.onrender.com/api/prescriptions/file/${fileId}`, {
+        const response = await fetch(`https://medibharat-backend-1.onrender.com/api/prescriptions/file/${fileId}`, {
           headers: {
             Authorization: 'Bearer ' + idToken
           }
