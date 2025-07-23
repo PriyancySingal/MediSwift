@@ -17,7 +17,7 @@ const sectionData = {
     "Diet": "What diet should I follow?"
 };
 
-const baseUrl = "https://medibot-backend-nebf.onrender.com";
+const baseUrl = "https://medibot-backend-1.onrender.com";
 
 // Add message to chat window
 function addMessage(message, isUser = false) {
