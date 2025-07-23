@@ -459,7 +459,7 @@
                 });
 
                 user.getIdToken().then(token => {
-                    fetch('https://medibharat-backend.onrender.com/api/prescriptions', {
+                    fetch('https://medibharat-backend-1.onrender.com/api/prescriptions', {
                         method: 'POST',
                         headers: {
                             Authorization: 'Bearer ' + token
