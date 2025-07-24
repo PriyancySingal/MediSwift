@@ -6,7 +6,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 
   const idToken = await user.getIdToken();
-  const res = await fetch("https://medibharat-backend-1.onrender.com/admin/prescriptions", {
+  const res = await fetch("https://medibharat-backend-1-zgx7.onrender.com/admin/prescriptions", {
     headers: { Authorization: "Bearer " + idToken }
   });
 
@@ -67,7 +67,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 async function openFile(fileId) {
   try {
     const token = window.adminToken;
-    const url = `https://medibharat-backend-1.onrender.com/api/prescriptions/file/${fileId}`;
+    const url = `https://medibharat-backend-1-zgx7.onrender.com/api/prescriptions/file/${fileId}`;
 
     const response = await fetch(url, {
       headers: {
